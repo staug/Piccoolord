@@ -1,0 +1,45 @@
+Scenario
+Help Piccolord in his quest for eternal crockets
+
+Goal:
+* Build a rogue-like game, using naheulbleuk rules adapted
+* Player control a party of adventurers. Max number: 4? OR SOLO?
+* Maps are automatically generated.
+* Traps are part of the game
+* Notion of action point is important. Some things can take multiple turns (magic?). The party may move faster than monster.
+
+----
+Fighter characteristics:
+[init = 1d6 +7]
+strength: close combat,
+dexterity: speed, long range, avoid trap
+intelligence: magical, identification
+
+power = 8
+defense = 10
+
+hp
+mp
+----
+
+
+
+----
+Action point:
+In my roguelike game Tyrant I used a system of action points and speed ratings.
+Basically:
+
+Most actions had a AP cost of 100
+Most creatures have a speed of 100
+Then the game loop would go as follows.
+
+Hero takes an action.
+Elapsed time is calculated as hero action AP cost * 100 / hero speed
+All creatures get given APs equal to creature speed * elapsed time / 100
+Creatures take actions and have APs subtracted until their APs are <= 0
+Repeat
+This system worked very nicely overall, example nice features:
+
+If you have a very fast hero (perhaps due to a magic speed bonus), you can get several moves in before an individual creature can move (it's APs would be negative for a few turns because the elapsed time would be small)
+You can make some actions more or less expensive by varying the AP cost
+You can delay creatures by subtracting APs, or give them a sudden one-off boost by adding APs
