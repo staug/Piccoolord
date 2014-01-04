@@ -2,6 +2,7 @@ __author__ = 'staug'
 import PythonExtraLib.Pyganim as pyganim
 import pygame
 import ast
+import GameControllerView
 
 # tODO: switch to two classes??
 # Todo: Manage a list of dirty rects
@@ -43,24 +44,53 @@ class GameObjectView:
         self.redraw = True
 
     def move(self):
+        """
+        This method prepares the road for the future draw. It doesn't call teh draw method it self,
+        the draw needs to be called separately.
+        """
         self.is_moving = True
-        original_grid_pos = self.owner.old_pos
-        target_grid_pos = self.owner.old_pos
         self.distance_left_to_move_x = self.distance_left_to_move_y = 0
+        self.distance_moved_x = self.distance_moved_y = 0
+        original_rect = GameControllerView.GameControllerView.get_grid_rect(self.owner.old_pos)
+        target_rect = GameControllerView.GameControllerView.get_grid_rect(self.owner.pos)
+        self.distance_left_to_move_x = target_rect.centerx - original_rect.centerx
+        self.distance_left_to_move_y = target_rect.centery - original_rect.centery
+        if self.animated:
+            if self.distance_left_to_move_x > 0:
+                self.direction = "RIGHT"
+            elif self.distance_left_to_move_x < 0:
+                self.direction = "LEFT"
+            elif self.distance_left_to_move_y > 0:
+                self.direction = "DOWN"
+            else:
+                self.direction = "UP"
 
     def draw(self):
-        if self.animated:
-            pass
-        elif self.redraw:
-            self.redraw = False
-            pass
-        pass
+        """
+        Main function to draw. Test if it should do something, and calls the private clear method first before
+        rendering on screen. Return teh list of rect impacted.
+        """
+        dirty_recs = []
+        if self._get_game_view().is_displayable(self.owner.pos) \
+            or self._get_game_view().is_displayable(self.owner.old_pos):
+            if self.is_moving:
+                # first, we clear the old
+                #TODO
+                pass
+            elif self.redraw:
+                #TODO
+                self.redraw = False
+                pass
+        return dirty_recs
 
-    def _clear(self):
+    def _clear(self, dx=0, dy=0):
         pass
 
     def need_redraw(self, value = True):
         self.redraw = value
+
+    def _get_game_view(self):
+        return self.owner.owner.view
 
 class AnimatedGameObjectView(GameObjectView):
     pass

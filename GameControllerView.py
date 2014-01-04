@@ -18,11 +18,14 @@ class GameControllerView:
         return pygame.Rect((pos[0]*GameResources.TILE_WIDTH + dx, pos[1]*GameResources.TILE_HEIGHT + dy), (pix_width, pix_height))
 
     def get_subsurface(self, pos,
-                       pix_width=GameResources.TILE_WIDTH, pix_height=GameResources.TILE_HEIGHT, from_original=False):
+                       pix_width=GameResources.TILE_WIDTH, pix_height=GameResources.TILE_HEIGHT, dx=0, dy=0, from_original=False):
         if from_original:
-            return self.original_region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height))
+            return self.original_region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height, dx, dy))
         else:
-            return self.region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height))
+            return self.region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height, dx, dy))
+
+    def is_displayable(self, tile_pos):
+        return self.camera.is_displayable(tile_pos)
 
 class Camera:
 
