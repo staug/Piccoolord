@@ -2,7 +2,7 @@ __author__ = 'staug'
 
 import WorldMapLogic
 import GameControllerView
-
+import GameObject
 
 class GameController:
 
@@ -35,6 +35,7 @@ if __name__ == '__main__':
     import pygame
     import GameResources
     import sys
+    import ConfigParser
 
     pygame.init()
     windowSurface = pygame.display.set_mode(GameResources.GLOBAL_WINDOW_SIZE, 0, 32)
@@ -48,7 +49,16 @@ if __name__ == '__main__':
     dx = dy = 0
 
     a_controller = GameController()
+
+    # import the player for test
+    config = ConfigParser.RawConfigParser()
+    config.read('resources/definitions.ini')
+    player = GameObject.GameObject('player', config._sections['Player'], a_controller.region.get_starting_position(), blocking=True)
+    player.owner = a_controller
+    print(player.pos)
+    a_controller.view.camera.center(player.pos)
     while True:
+        moveUp = moveDown = moveLeft = moveRight = False
         dx = dy = 0
         windowSurface.fill(BGCOLOR)
         for event in pygame.event.get(): # event handling loop
@@ -62,55 +72,18 @@ if __name__ == '__main__':
                     pygame.quit()
                     sys.exit()
 
-                if event.key == pygame.K_UP:
-                    moveUp = True
-                    moveDown = False
-                    if not moveLeft and not moveRight:
-                        # only change the direction to up if the player wasn't moving left/right
-                        direction = UP
-                elif event.key == pygame.K_DOWN:
-                    moveDown = True
-                    moveUp = False
-                    if not moveLeft and not moveRight:
-                        direction = DOWN
-                elif event.key == pygame.K_LEFT:
-                    moveLeft = True
-                    moveRight = False
-                    if not moveUp and not moveDown:
-                        direction = LEFT
-                elif event.key == pygame.K_RIGHT:
-                    moveRight = True
-                    moveLeft = False
-                    if not moveUp and not moveDown:
-                        direction = RIGHT
-
             elif event.type == pygame.KEYUP:
 
                 if event.key == pygame.K_UP:
-                    moveUp = False
-                    # if the player was moving in a sideways direction before, change the direction the player is facing.
-                    if moveLeft:
-                        direction = LEFT
-                    if moveRight:
-                        direction = RIGHT
+                    moveUp = True
                 elif event.key == pygame.K_DOWN:
-                    moveDown = False
-                    if moveLeft:
-                        direction = LEFT
-                    if moveRight:
-                        direction = RIGHT
+                    moveDown = True
                 elif event.key == pygame.K_LEFT:
-                    moveLeft = False
-                    if moveUp:
-                        direction = UP
-                    if moveDown:
-                        direction = DOWN
+                    moveLeft = True
                 elif event.key == pygame.K_RIGHT:
-                    moveRight = False
-                    if moveUp:
-                        direction = UP
-                    if moveDown:
-                        direction = DOWN
+                    moveRight = True
+                if event.key == pygame.K_c:
+                    a_controller.view.camera.center(player.pos)
 
         if moveUp:
             dy -= 1
@@ -121,7 +94,10 @@ if __name__ == '__main__':
         if moveRight:
             dx += 1
 
-        a_controller.view.camera.move(dx, dy)
+        player.move(dx, dy)
+        player.draw()
+
+        #a_controller.view.camera.move(dx, dy)
         windowSurface.blit(a_controller.view.region_view, (0,0), area=a_controller.view.camera.camera_rect)
         windowSurface.blit(a_controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
 

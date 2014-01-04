@@ -167,6 +167,15 @@ class PygAnimation(object):
         # version of the frame, it will return that one.
         return self.getFrame(self.currentFrameNum)
 
+    def getCurrentFrameSpecial(self):
+        # Returns the pygame.Surface object of the frame that would be drawn
+        # if the blit() method were called right now. If there is a transformed
+        # version of the frame, it will return that one.
+        if self.isFinished():
+            self.state = STOPPED
+        return self.getFrame(self.currentFrameNum)
+
+
 
     def clearTransforms(self):
         # Deletes all the transformed frames so that the animation object

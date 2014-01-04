@@ -17,12 +17,27 @@ class GameControllerView:
     def get_grid_rect(pos, pix_width=GameResources.TILE_WIDTH, pix_height=GameResources.TILE_HEIGHT, dx=0, dy=0):
         return pygame.Rect((pos[0]*GameResources.TILE_WIDTH + dx, pos[1]*GameResources.TILE_HEIGHT + dy), (pix_width, pix_height))
 
-    def get_subsurface(self, pos,
+    def _get_subsurface(self, pos,
                        pix_width=GameResources.TILE_WIDTH, pix_height=GameResources.TILE_HEIGHT, dx=0, dy=0, from_original=False):
         if from_original:
             return self.original_region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height, dx, dy))
         else:
             return self.region_view.subsurface(GameControllerView.get_grid_rect(pos, pix_width, pix_height, dx, dy))
+
+    def clear(self, grid_pos, dimension=(GameResources.TILE_WIDTH, GameResources.TILE_HEIGHT), dx=0, dy=0):
+        """Copy from the original the rect mentioned. Return the rect"""
+        rect = GameControllerView.get_grid_rect(grid_pos, dimension[0], dimension[1], dx, dy)
+        self.region_view.blit(self._get_subsurface(grid_pos, dimension[0], dimension[1], dx, dy, from_original=True),
+                              dest=rect)
+        return rect
+
+    def draw(self, surface_to_draw, grid_pos,
+             dimension=(GameResources.TILE_WIDTH, GameResources.TILE_HEIGHT), dx=0, dy=0):
+        """blit the surface to the game image with transparency"""
+        rect = GameControllerView.get_grid_rect(grid_pos, dimension[0], dimension[1], dx, dy)
+        #self.region_view.blit(surface_to_draw, dest = rect, special_flags=pygame.BLEND_RGBA_ADD)
+        self.region_view.blit(surface_to_draw, dest = rect)
+        return rect
 
     def is_displayable(self, tile_pos):
         return self.camera.is_displayable(tile_pos)
@@ -37,7 +52,7 @@ class Camera:
         """
         return True if the tile position can be displayed on the screen
         """
-        return self.camera_rect.contains(GameControllerView.get_rect(tile_pos))
+        return self.camera_rect.contains(GameControllerView.get_grid_rect(tile_pos))
 
     def move(self, tile_dx, tile_dy):
         self.camera_rect.move_ip(tile_dx * GameResources.TILE_WIDTH, tile_dy * GameResources.TILE_HEIGHT)

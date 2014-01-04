@@ -18,6 +18,9 @@ class GameObject:
         if self.ai:  # let the AI component know who owns it
             self.ai.owner = self
 
+        self.view = None
+
+
     def draw(self):
         if not self.view:
             self.view = GameObjectView.GameObjectView(self.resources)
@@ -27,7 +30,7 @@ class GameObject:
 
     def move(self, dx, dy):
         #move by the given amount, if the destination is not blocked
-        if not self.game_controller.active_region.grid[(self.pos[0]+dx, self.pos[1]+dy)].blocking\
+        if not self.owner.region.grid[(self.pos[0]+dx, self.pos[1]+dy)].blocking\
             and (dx != 0 or dy != 0):
             self.old_pos = self.pos
             self.pos = (self.pos[0]+dx, self.pos[1]+dy)
