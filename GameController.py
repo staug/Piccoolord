@@ -55,7 +55,6 @@ if __name__ == '__main__':
     config.read('resources/definitions.ini')
     player = GameObject.GameObject('player', config._sections['Player'], a_controller.region.get_starting_position(), blocking=True)
     player.owner = a_controller
-    print(player.pos)
     a_controller.view.camera.center(player.pos)
     while True:
         moveUp = moveDown = moveLeft = moveRight = False
@@ -94,7 +93,12 @@ if __name__ == '__main__':
         if moveRight:
             dx += 1
 
-        player.move(dx, dy)
+        if dx != 0 or dy != 0:
+            player.move(dx, dy)
+            # a_controller.view.update_fog_of_war(player.pos, 3)
+            a_controller.view.explorer_map.center(player.pos)
+            if a_controller.view.camera.close_edge(player.pos):
+                a_controller.view.camera.center(player.pos)
         player.draw()
 
         #a_controller.view.camera.move(dx, dy)

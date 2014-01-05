@@ -79,6 +79,35 @@ class Region:
         assert self.__starting_positions > 0, "No more starting positions"
         return self.__starting_positions.pop()
 
+    def explore(self, grid_pos):
+        """Flag the Tile in the grid as visible. Used by the Fog of war.
+        """
+        self.grid[grid_pos].set_visible(True)
+
+    def reset_visible(self, grid_pos):
+        """Reset the visible flag, but keep the explored status. Used by the Fog of war.
+        """
+        self.grid[grid_pos].set_visible(False)
+
+    # TODO: add real light blocking stuff
+    def block_light(self, grid_pos):
+        return self.grid[grid_pos].blocking
+
+    def print_info(self, print_grid=False):
+
+        print("Printing region Info...\n\n")
+        print("Size:  " + str(self.size[0]) + "x" + str(self.size[1]))
+        print("Places:  " + str(len(self.places)) + "\n\n")
+        print("Place name: ")
+        for place in self.places:
+            print(place)
+        if print_grid:
+            for y in range(0, self.size[1]):
+                row = ""
+                for x in range(0, self.size[0]):
+                    row += str((self.grid[(x, y)]).tile_type)
+                print (row)
+
     def __generate_region_map(self, max_number_places):
         """
         Generate the whole map, add the deco
@@ -355,22 +384,6 @@ class Region:
                 self.grid[(cut_in_wall_position[0] - pos, cut_in_wall_position[1] - 1)].part_of = new_place
                 self.grid[(cut_in_wall_position[0] - pos, cut_in_wall_position[1] + 1)].tile_type = Tile.GRID_WALLS
                 self.grid[(cut_in_wall_position[0] - pos, cut_in_wall_position[1] + 1)].part_of = new_place
-
-    def print_info(self, print_grid=False):
-
-        print("Printing region Info...\n\n")
-        print("Size:  " + str(self.size[0]) + "x" + str(self.size[1]))
-        print("Places:  " + str(len(self.places)) + "\n\n")
-        print("Place name: ")
-        for place in self.places:
-            print(place)
-        if print_grid:
-            for y in range(0, self.size[1]):
-                row = ""
-                for x in range(0, self.size[0]):
-                    row += str((self.grid[(x, y)]).tile_type)
-                print (row)
-                # print(arr)
 
     def __str__(self):
         result = self.name + " (" + str(self.size[0]) + "x" + str(self.size[1]) + ")\n"

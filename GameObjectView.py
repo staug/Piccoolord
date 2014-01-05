@@ -19,7 +19,6 @@ class GameObjectView:
             # Now split the image - we assume always 3
             rec_lists = [[pygame.Rect(x_top + self.width * i, y_top + j * self.height, self.width, self.height)
                               for i in range(3)] for j in range(4)]
-            print(rec_lists)
             self.images = {
                 "UP": pyganim.PygAnimation([(sprite_surface.subsurface(rec_lists[0][0]), 0.1),
                                             (sprite_surface.subsurface(rec_lists[0][1]), 0.1),
@@ -85,7 +84,6 @@ class GameObjectView:
             if self.is_moving:
                 # Exceptional case; there may be a double move going on
                 for dirty in self._dirty_element_to_erase:
-                    print(dirty)
                     dirty_recs += self._get_game_view().clear(dirty[0], dx=dirty[1], dy=dirty[2])
                 self._dirty_element_to_erase = []
                 # first, we clear the old
