@@ -10,25 +10,70 @@ class GameController:
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
         self.region = self.world.regions[0]
         self.view = GameControllerView.GameControllerView(self)
+        self.ticker = Ticker()
 
-        self.objects = []
+        self.objects = set()
 
 
-    def is_blocked(self, x, y):
+
+    def is_blocked(self, grid_pos):
         '''
         test if the current position at (x,y) is blocking. It is blocking if the grid is blocked, or if
          there is an object that is currently on this position and this object is blocking
         '''
         #first test the map tile
-        if self.region.grid[(x, y)].blocking:
+        if self.region.grid[(grid_pos)].blocking:
             return True
 
         #now check for any blocking objects
         for an_object in self.objects:
-            if an_object.blocking and an_object.x == x and an_object.y == y:
+            if an_object.blocking and an_object.pos == grid_pos:
                 return True
 
         return False
+
+    @property
+    def blocking_set(self):
+        """
+        The list of all blocking tiles in the game
+        """
+        blocks = set()
+        for x in range(self.region.size[0]):
+            for y in range(self.region.size[1]):
+                if self.region.grid[(x, y)].blocking:
+                    blocks.add((x,y))
+        for an_object in self.objects:
+            if an_object.blocking:
+                blocks.add(an_object.pos)
+        return blocks
+
+    def add_object(self, obj):
+        self.objects.add(obj)
+        obj.owner = self
+
+    def get_player(self):
+        for an_object in self.objects:
+            if an_object.name == 'player':
+                return an_object
+
+
+class Ticker(object):
+    """Simple timer for roguelike games.
+    Taken from http://www.roguebasin.com/index.php?title=A_simple_turn_scheduling_system_--_Python_implementation"""
+
+    def __init__(self):
+        self.ticks = 0  # current ticks--sys.maxint is 2147483647
+        self.schedule = {}  # this is the dict of things to do {ticks: [obj1, obj2, ...], ticks+1: [...], ...}
+
+    def schedule_turn(self, interval, obj):
+        self.schedule.setdefault(self.ticks + interval, []).append(obj)
+
+    def next_turn(self, increment=1):
+        self.ticks += increment
+        things_to_do = self.schedule.pop(self.ticks, [])
+        for obj in things_to_do:
+            obj.take_turn()
+
 
 if __name__ == '__main__':
     # The following is for the test only
@@ -54,7 +99,12 @@ if __name__ == '__main__':
     config = ConfigParser.RawConfigParser()
     config.read('resources/definitions.ini')
     player = GameObject.GameObject('player', config._sections['Player'], a_controller.region.get_starting_position(), blocking=True)
-    player.owner = a_controller
+    a_controller.add_object(player)
+
+    p2_ai = GameObject.FollowerAI(a_controller.ticker)
+    player2 = GameObject.GameObject('player2', config._sections['Skeletton'], a_controller.region.get_starting_position(), blocking=True, ai=p2_ai)
+    a_controller.add_object(player2)
+
     a_controller.view.camera.center(player.pos)
     while True:
         moveUp = moveDown = moveLeft = moveRight = False
@@ -94,14 +144,20 @@ if __name__ == '__main__':
             dx += 1
 
         if dx != 0 or dy != 0:
-            player.move(dx, dy)
+            a_controller.get_player().move(dx, dy)
             # a_controller.view.update_fog_of_war(player.pos, 3)
-            a_controller.view.explorer_map.center(player.pos)
-            if a_controller.view.camera.close_edge(player.pos):
-                a_controller.view.camera.center(player.pos)
-        player.draw()
+            a_controller.ticker.next_turn()
 
-        #a_controller.view.camera.move(dx, dy)
+            a_controller.view.explorer_map.center(a_controller.get_player().pos)
+            if a_controller.view.camera.close_edge(a_controller.get_player().pos):
+                a_controller.view.camera.center(a_controller.get_player().pos)
+            for obj in a_controller.objects:
+                print("Name: {} Pos: {}".format(obj.name, obj.pos))
+
+
+        for obj in a_controller.objects:
+            obj.draw()
+
         windowSurface.blit(a_controller.view.region_view, (0,0), area=a_controller.view.camera.camera_rect)
         windowSurface.blit(a_controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
 
