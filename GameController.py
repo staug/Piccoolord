@@ -8,19 +8,29 @@ class GameController:
 
     def __init__(self):
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
-        self.region = self.world.regions[0]
         self.view = GameControllerView.GameControllerView(self)
-        self.ticker = Ticker()
+        self.setup_level(0)
 
+        self.player_party = []
+        self.player_index = 0
+
+    def setup_level(self, level_number=0):
+        self.region = self.world.regions[level_number]
+        self.ticker = Ticker()
         self.objects = set()
 
-
+        # set of walls and other blocking object:
+        self.blocks = set()
+        for x in range(self.region.size[0]):
+            for y in range(self.region.size[1]):
+                if self.region.grid[(x, y)].blocking:
+                    self.blocks.add((x,y))
 
     def is_blocked(self, grid_pos):
-        '''
+        """
         test if the current position at (x,y) is blocking. It is blocking if the grid is blocked, or if
          there is an object that is currently on this position and this object is blocking
-        '''
+        """
         #first test the map tile
         if self.region.grid[(grid_pos)].blocking:
             return True
@@ -35,26 +45,35 @@ class GameController:
     @property
     def blocking_set(self):
         """
-        The list of all blocking tiles in the game
+        The list of all blocking tiles in the game, including the objects
         """
-        blocks = set()
-        for x in range(self.region.size[0]):
-            for y in range(self.region.size[1]):
-                if self.region.grid[(x, y)].blocking:
-                    blocks.add((x,y))
+        all_blocks = self.blocks.copy()
         for an_object in self.objects:
             if an_object.blocking:
-                blocks.add(an_object.pos)
-        return blocks
+                all_blocks.add(an_object.pos)
+        return all_blocks
 
     def add_object(self, obj):
-        self.objects.add(obj)
         obj.owner = self
+        self.__add_remove_object(obj)
 
-    def get_player(self):
-        for an_object in self.objects:
-            if an_object.name == 'player':
-                return an_object
+    def remove_object(self, obj):
+        obj.owner = None
+        self.__add_remove_object(obj, False)
+
+    def __add_remove_object(self, obj, add=True):
+        if add:
+            self.objects.add(obj)
+            if obj.player:
+                self.player_party.append(obj)
+        else:
+            self.objects.remove(obj)
+            if obj.player:
+                self.player_party.remove(obj)
+
+    @property
+    def player(self):
+        return self.player_party[self.player_index]
 
 
 class Ticker(object):
@@ -144,13 +163,13 @@ if __name__ == '__main__':
             dx += 1
 
         if dx != 0 or dy != 0:
-            a_controller.get_player().move(dx, dy)
+            a_controller.player.move(dx, dy)
             # a_controller.view.update_fog_of_war(player.pos, 3)
             a_controller.ticker.next_turn()
 
-            a_controller.view.explorer_map.center(a_controller.get_player().pos)
-            if a_controller.view.camera.close_edge(a_controller.get_player().pos):
-                a_controller.view.camera.center(a_controller.get_player().pos)
+            a_controller.view.explorer_map.center(a_controller.player.pos)
+            if a_controller.view.camera.close_edge(a_controller.player.pos):
+                a_controller.view.camera.center(a_controller.player.pos)
             for obj in a_controller.objects:
                 print("Name: {} Pos: {}".format(obj.name, obj.pos))
 
