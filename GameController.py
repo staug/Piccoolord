@@ -9,6 +9,8 @@ class GameController:
     def __init__(self):
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
         self.setup_level(0)
+        self.text_display = {}
+        self._default_text_display = None
 
         self.player_party = []
         self.player_index = 0
@@ -75,6 +77,18 @@ class GameController:
     def player(self):
         return self.player_party[self.player_index]
 
+    def add_text_display(self, reader, display_type):
+        if not self._default_text_display:
+            self._default_text_display = display_type
+        self.text_display[display_type] = reader
+
+    def text(self, text, display_type=None, add=True):
+        if display_type in self.text_display:
+            if add:
+                self.text_display[display_type].ADD_TEXT = text
+            else:
+                self.text_display[display_type].TEXT = text
+        print(text)
 
 class Ticker(object):
     """Simple timer for roguelike games.

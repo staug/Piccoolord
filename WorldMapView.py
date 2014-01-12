@@ -5,31 +5,17 @@ import pygame
 import GameResources
 import random
 
-class PygameInit(object):
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(PygameInit, cls).__new__(
-                                cls, *args, **kwargs)
-        return cls._instance
-
-    def __init__(self):
-        pygame.init()
-        pygame.display.set_mode(GameResources.GLOBAL_WINDOW_SIZE)
-
 
 class View:
         
     TILE_WIDTH = GameResources.TILE_WIDTH
     TILE_HEIGHT = GameResources.TILE_HEIGHT
-    BGCOLOR = (0, 0, 0)
 
 class RegionView(View):
     """
     The view for the original regions
     """
     def __init__(self, region):
-        PygameInit()
         self.owner = region
         self.view = pygame.Surface((self.owner.size[0] * self.TILE_WIDTH,
                                     self.owner.size[1] * self.TILE_HEIGHT),
@@ -105,7 +91,7 @@ class RegionView(View):
                            SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 9 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT)))]
         }
 
-        self.view.fill(self.BGCOLOR)
+        self.view.fill(GameResources.GAME_BG_COLOR)
 
         currentImageDictionary = IMAGES_DICT
 

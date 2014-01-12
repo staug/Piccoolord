@@ -4,7 +4,6 @@ import pygame
 import ast
 import GameControllerView
 
-# tODO: switch to two classes??
 
 class GameObjectView:
 
@@ -117,3 +116,16 @@ class GameObjectView:
 
     def _get_game_view(self):
         return self.owner.owner.view
+
+
+class PlayerView:
+
+    def __init__(self, player):
+        self.player = player
+
+    def player_surface(self):
+        """
+        Render the player rectangular area on the left border of the screen
+        """
+        pass
+        #TODO: implement the player surface area
