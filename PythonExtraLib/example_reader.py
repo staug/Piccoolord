@@ -12,7 +12,7 @@ pensez à encoder vos strings sous python2.x ...
 
 (appuyez sur ESPACE pour continuer)"""
 
-texte = Reader(message,pos=(10,10),width=200,font="Vanthian Ragnarok.ttf", fontsize=16,height=300,bg=(200,200,200),fgcolor=(20,20,20))
+texte = Reader(message,pos=(10,10),width=200,font="Andale-mono.ttf", fontsize=16,height=300,bg=(200,200,200),fgcolor=(20,20,20))
 texte.show()
 while True:
     ev = event.wait()

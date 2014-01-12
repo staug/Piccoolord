@@ -9,6 +9,8 @@ pygame.font.init()
 
 class Reader(pygame.Rect,object):
 
+    DEFAULT_ENCODING = 'utf-8'
+
     class ln(object):
         def __init__(self,string,nl,sp):
             self.string = string
@@ -17,7 +19,8 @@ class Reader(pygame.Rect,object):
 
     def __init__(self, text, pos, width, fontsize, height=None, font=None, bg=(250, 250, 250), fgcolor=(0, 0, 0),
                  hlcolor=(180, 180, 200), split=True):
-        self._original = text.expandtabs(4).split('\n')
+        decoded = text.decode(Reader.DEFAULT_ENCODING)
+        self._original = decoded.expandtabs(4).split('\n')
         self.BG = bg
         self.FGCOLOR = fgcolor
         self._line = 0
@@ -58,18 +61,20 @@ class Reader(pygame.Rect,object):
         return '\n'.join(self._original)
     @ADD_TEXT.setter
     def ADD_TEXT(self,text):
+        decoded = text.decode(Reader.DEFAULT_ENCODING)
         if not self._original:
-            self._original = text.expandtabs(4).split('\n')
+            self._original = decoded.expandtabs(4).split('\n')
         else:
-            self._original += text.expandtabs(4).split('\n')
+            self._original += decoded.expandtabs(4).split('\n')
         self._splitted = self.splittext()
 
     @property
     def TEXT(self):
         return '\n'.join(self._original)
     @TEXT.setter
-    def TEXT(self,text):
-        self._original = text.expandtabs(4).split('\n')
+    def TEXT(self, text):
+        decoded = text.decode(Reader.DEFAULT_ENCODING)
+        self._original = decoded.expandtabs(4).split('\n')
         self._splitted = self.splittext()
 
     @property

@@ -3,7 +3,8 @@ import math
 import GameObjectView
 import random
 import GameController
-
+import GameResources
+import GameUtil
 
 class GameObject:
     def __init__(self,
@@ -73,57 +74,81 @@ class GameObject:
 
 class Player:
 
-    def __init__(self, automatic=True):
+    def __init__(self, attributes=None, work=None, origin=None):
         self.original_attributes = {}
         self.vanquished_enemy = []
-        if automatic:
+        self.destiny_points = random.randint(0, 3)
+
+        if not attributes:
             self.roll_attributes()
+        else:
+            names = ["COU", "INT", "CHA", "AD", "FO"]
+            for att in names:
+                self.original_attributes[att] = attributes[att]
+
+        if work:
+            self.work = work
+        else:
+            self.work = random.choice(self.define_possible_work())
+
+        if origin:
+            self.work = work
+        else:
+            self.work = random.choice(self.define_possible_work())
+
 
     def roll_attributes(self):
         names = ["COU", "INT", "CHA", "AD", "FO"]
         for att in names:
             self.original_attributes[att] = random.randint(1, 6) + 7
-        self.destiny_points = random.randint(0, 3)
 
         self.original_attributes["AT"] = 8
         self.original_attributes["PRD"] = 10
 
-        self.original_attributes["HP"] = 10
-        self.original_attributes["MP"] = 10
+        self.original_attributes["HP"] = 20
+        self.original_attributes["MP"] = 30
 
 
     def define_possible_origin(self):
-        # TODO
         possible_origins = []
         names = ["COU", "INT", "CHA", "AD", "FO"]
         origin_limits = {
             "Humain": {},
             "Barbare": {
-                "COU": {"MIN": 12},
-                "FO": {"MIN": 13},
+                "COU": {"MIN": 12}, "FO": {"MIN": 13},
             },
             "Nain": {
-                "COU": {"MIN": 11},
-                "FO": {"MIN": 12},
+                "COU": {"MIN": 11}, "FO": {"MIN": 12},
             },
             "Haut Elfe": {
-                "INT": {"MIN": 11},
-                "CHA": {"MIN": 12},
-                "AD": {"MIN": 12},
-                "FO": {"MAX": 12},
+                "INT": {"MIN": 11}, "CHA": {"MIN": 12}, "AD": {"MIN": 12}, "FO": {"MAX": 12},
             },
             "Demi Elfe": {
-                "CHA": {"MIN": 10},
-                "AD": {"MIN": 11},
+                "CHA": {"MIN": 10}, "AD": {"MIN": 11},
             },
             "Elfe Sylvain": {
-                "CHA": {"MIN": 12},
-                "AD": {"MIN": 10},
-                "FO": {"MAX": 11},
+                "CHA": {"MIN": 12}, "AD": {"MIN": 10}, "FO": {"MAX": 11},
             },
             "Elfe Noir": {
-                "INT": {"MIN": 12},
-                "AD": {"MIN": 13},
+                "INT": {"MIN": 12}, "AD": {"MIN": 13},
+            },
+            "Orque": {
+                "INT": {"MAX": 8}, "CHA": {"MAX": 10}, "FO": {"MIN": 12},
+            },
+            "Demi Orque": {
+                "INT": {"MAX": 10}, "AD": {"MAX": 11}, "FO": {"MIN": 12},
+            },
+            "Gobelin": {
+                "COU": {"MAX": 10}, "INT": {"MAX": 10}, "CHA": {"MAX": 8}, "FO": {"MAX": 9},
+            },
+            "Ogre": {
+                "INT": {"MAX": 9}, "CHA": {"MAX": 10}, "AD": {"MAX": 11}, "FO": {"MIN": 13},
+            },
+            "Hobbit": {
+                "COU": {"MIN": 12}, "INT": {"MIN": 10}, "FO": {"MAX": 10},
+            },
+            "Gnome": {
+                "INT": {"MIN": 10}, "AD": {"MIN": 13}, "FO": {"MAX": 8},
             },
         }
         for origin in origin_limits.keys():
@@ -140,6 +165,64 @@ class Player:
                 possible_origins.append(origin)
         return possible_origins
 
+    def define_possible_work(self):
+        # TODO: race prevents some work!
+        possible_works = []
+        names = ["COU", "INT", "CHA", "AD", "FO"]
+        work_limits = {
+            "Guerrier": {
+                "COU": {"MIN": 12}, "FO": {"MIN": 12},
+            },
+            "Ninja": {
+                "AD": {"MIN": 13},
+            },
+            "Voleur": {
+                "AD": {"MIN": 12},
+            },
+            "Pretre": {
+                "CHA": {"MIN": 12},
+            },
+            "Mage": {
+                "INT": {"MIN": 12},
+            },
+            "Paladin": {
+                "COU": {"MIN": 12}, "INT": {"MIN": 10}, "CHA": {"MIN": 11}, "FO": {"MIN": 9},
+            },
+            "Ranger": {
+                "CHA": {"MIN": 10}, "AD": {"MIN": 10},
+            },
+            "Menestrel": {
+                "CHA": {"MIN": 12}, "AD": {"MIN": 11},
+            },
+            "Marchand": {
+                "INT": {"MIN": 12}, "CHA": {"MIN": 11},
+            },
+            "Ingenieur": {
+                "AD": {"MIN": 11},
+            },
+            "Pirate": {
+                "COU": {"MIN": 11}, "AD": {"MIN": 11},
+            },
+            "Bourgeois": {
+                "INT": {"MIN": 10}, "CHA": {"MIN": 11},
+            },
+        }
+        for work in work_limits.keys():
+            ok = True
+            for att in names:
+                if att in work_limits[work].keys():
+                    limit = work_limits[work][att]
+                    if "MIN" in limit.keys():
+                        if self.original_attributes[att] < limit["MIN"]:
+                            ok = False
+                    elif self.original_attributes[att] > limit["MAX"]:
+                            ok = False
+            if ok:
+                possible_works.append(work)
+        if len(possible_works) == 0:
+            possible_works.append("Aucun")
+        return possible_works
+
 
 class Fighter:
 
@@ -147,8 +230,8 @@ class Fighter:
         self.original_attributes = {}
         if resources:
             self.original_attributes = resources
-        self.hp = self.original_attributes["HP"]
-        self.mp = self.original_attributes["MP"]
+            self.hp = self.original_attributes["HP"]
+            self.mp = self.original_attributes["MP"]
 
     def replicate_player_attributes(self, player):
         self.original_attributes = player.original_attributes
@@ -195,6 +278,27 @@ class Fighter:
     def mag_res(self):
         return (self.int + self.cou + self.fo) / 3
 
+    @property
+    def pi(self):
+        # TODO: define impact points!
+        return (3, 5)
+
+    def take_damage(self, value):
+        self.hp -= value
+
+    def fight(self, opponent):
+        # TODO: courage fight first, critical success and failure; Remove printing
+        at_test_result = GameUtil.pass_test(self.at)
+        print("EVAL: " + at_test_result)
+        if GameResources.SUCCESS in at_test_result:
+            # Success for attack, try to pary
+            print("PARADE")
+            prd_test_result = GameUtil.pass_test(opponent.prd)
+            print("EVAL: " + prd_test_result)
+            if GameResources.FAILURE in prd_test_result:
+                # Opponent did not manage to parry
+                opponent.take_damage(random.randint(self.pi[0], self.pi[1]))
+                print("HP = {}".format(opponent.hp))
 
 class ArtificialIntelligence:
 
@@ -213,6 +317,8 @@ class FollowerAI(ArtificialIntelligence):
         self.ticker.schedule_turn(self.speed, self)
 
     def move_towards(self, target_pos):
+        # TODO: every x turn, compute A* algo
+        # except if distance is < x...
         dx = target_pos[0] - self.owner.pos[0]
         dy = target_pos[1] - self.owner.pos[1]
         distance = math.sqrt(dx ** 2 + dy ** 2)
@@ -233,7 +339,23 @@ class FollowerAI(ArtificialIntelligence):
         self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
 
 
-
 if __name__ == '__main__':
-    test = Player()
-    print("Attributes: {} - Origin: {}".format(test.original_attributes, test.define_possible_origin()))
+    playerA = Player()
+    fighterA = Fighter()
+    fighterA.replicate_player_attributes(playerA)
+    print("Attributes: {} - Origin: {} - Work: {}".format(
+        playerA.original_attributes,
+        playerA.define_possible_origin(),
+        playerA.define_possible_work()))
+    playerB = Player()
+    fighterB = Fighter()
+    fighterB.replicate_player_attributes(playerB)
+    print("Attributes: {} - Origin: {} - Work: {}".format(
+        playerB.original_attributes,
+        playerB.define_possible_origin(),
+        playerB.define_possible_work()))
+    while fighterA.hp > 0 and fighterB.hp > 0:
+        print("Attaque A")
+        fighterA.fight(fighterB)
+        print("Attaque B")
+        fighterB.fight(fighterA)

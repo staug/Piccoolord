@@ -8,7 +8,6 @@ class GameController:
 
     def __init__(self):
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
-        self.view = GameControllerView.GameControllerView(self)
         self.setup_level(0)
 
         self.player_party = []
@@ -18,6 +17,7 @@ class GameController:
         self.region = self.world.regions[level_number]
         self.ticker = Ticker()
         self.objects = set()
+        self.view = GameControllerView.GameControllerView(self)
 
         # set of walls and other blocking object:
         self.blocks = set()
@@ -100,6 +100,7 @@ if __name__ == '__main__':
     import GameResources
     import sys
     import ConfigParser
+    import GameUtil
 
     pygame.init()
     windowSurface = pygame.display.set_mode(GameResources.GLOBAL_WINDOW_SIZE, 0, 32)
@@ -123,6 +124,8 @@ if __name__ == '__main__':
     p2_ai = GameObject.FollowerAI(a_controller.ticker)
     player2 = GameObject.GameObject('player2', config._sections['Skeletton'], a_controller.region.get_starting_position(), blocking=True, ai=p2_ai)
     a_controller.add_object(player2)
+
+    algo = GameUtil.AStar(player.pos, player2.pos, a_controller.blocks, a_controller.region.size)
 
     a_controller.view.camera.center(player.pos)
     while True:
