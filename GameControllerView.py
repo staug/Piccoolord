@@ -90,7 +90,7 @@ class Camera:
     def close_edge(self, tile_pos):
         """ Test if the tile pos is close to the camera edge. return True if the Camera should move """
         subset_camera = pygame.Rect((0, 0),
-                                    (GameResources.CAMERA_WINDOW_SIZE[0] / 2, GameResources.CAMERA_WINDOW_SIZE[0] / 2))
+                                    (GameResources.CAMERA_WINDOW_SIZE[0] / 2, GameResources.CAMERA_WINDOW_SIZE[1] / 2))
         subset_camera.center = self.camera_rect.center
         return not subset_camera.contains(GameControllerView.get_grid_rect(tile_pos))
 

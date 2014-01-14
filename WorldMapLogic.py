@@ -175,16 +175,6 @@ class Region:
                     neighbor_place.connections.append(new_place)
                     new_place.connections.append(neighbor_place)
 
-        # Now we have finished.. We tie back all the tiles that belong to the places for easier further treatment
-        for x in range(0, self.size[0]):
-            for y in range(0, self.size[1]):
-                current_place = self.grid[(x, y)].part_of
-                if current_place:
-                    current_place.tiles[(x, y)] = self.grid[(x, y)]
-                    if not self.grid[(x, y)].blocking:
-                        self.__starting_positions.append((x, y))
-        random.shuffle(self.__starting_positions)
-
         # Adding the deco
         random.shuffle(self.places)
         for place in self.places:
@@ -201,6 +191,17 @@ class Region:
                     self.__deco_1x1_floor(place)
             for i in range(0, random.randint(0, 5)):
                 self.__deco_1x2_wall(place)
+
+        # Now we have finished.. We tie back all the tiles that belong to the places for easier further treatment
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                current_place = self.grid[(x, y)].part_of
+                if current_place:
+                    current_place.tiles[(x, y)] = self.grid[(x, y)]
+                    if not self.grid[(x, y)].blocking:
+                        self.__starting_positions.append((x, y))
+        random.shuffle(self.__starting_positions)
+
 
     def __deco_1x1_floor(self, current_place):
         if current_place.size[0] > 4 and current_place.size[1] > 4:
@@ -444,7 +445,7 @@ class Tile():
 
     @property
     def blocking(self):
-        return not (self.tile_type == Tile.GRID_FLOOR) or self.decoration
+        return self.decoration or not (self.tile_type == Tile.GRID_FLOOR)
 
     def set_visible(self,
                     value):

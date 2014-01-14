@@ -65,13 +65,27 @@ class GameScene(SceneBase):
         SceneBase.__init__(self)
         self.background = None
         self.controller = GameController.GameController()
-        self.text = PythonExtraLib.reader.Reader("Bienvenue", pos=(0,GameResources.CAMERA_WINDOW_SIZE[1]),
-                                                 width=GameResources.CAMERA_WINDOW_SIZE[0],
-                                                 font="./PythonExtraLib/Andale-mono.ttf",
-                                                 fontsize=12,
-                                                 height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1],
-                                                 bg=(200,200,200),
-                                                 fgcolor=(20,20,20))
+        text_dialogue = PythonExtraLib.reader.Reader("Bienvenue",
+                                            pos=(GameResources.TEXT_MARGIN,
+                                                 GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
+                                            width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
+                                            font="./PythonExtraLib/Andale-mono.ttf",
+                                            fontsize=12,
+                                            height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
+                                            bg=GameResources.TEXT_BGCOLOR,
+                                            fgcolor=(20,20,20))
+        self.controller.add_text_display(text_dialogue, GameResources.TEXT_DIALOGUE)
+        text_fight = PythonExtraLib.reader.Reader("Bienvenue",
+                                            pos=(GameResources.TEXT_MARGIN,
+                                                 GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
+                                            width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
+                                            font="./PythonExtraLib/Andale-mono.ttf",
+                                            fontsize=12,
+                                            height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
+                                            bg=GameResources.TEXT_BGCOLOR,
+                                            fgcolor=(255,20,20))
+        self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
+        self.current_text_display_type = GameResources.TEXT_DIALOGUE
 
         # import the player for test TODO: move to controller
         config = ConfigParser.RawConfigParser()
@@ -84,10 +98,34 @@ class GameScene(SceneBase):
         self.controller.add_object(player2)
 
     def ProcessInput(self, events, pressed_keys):
-        pass
-        
+        self.dx = self.dy = 0
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.dy -= 1
+                elif event.key == pygame.K_DOWN:
+                    self.dy += 1
+                elif event.key == pygame.K_LEFT:
+                    self.dx -= 1
+                elif event.key == pygame.K_RIGHT:
+                    self.dx += 1
+                elif event.key == pygame.K_c:
+                    self.controller.view.camera.center(self.controller.player.pos)
+
+            self.controller.text_display[self.current_text_display_type].simple_update(event)
+
+
     def Update(self):
-        pass
+        #Call the other objects take action if the player acted
+        if (self.dx != 0 or self.dy != 0) and (self.controller.player.move(self.dx, self.dy)):
+            self.controller.ticker.next_turn()
+
+            if self.controller.view.camera.close_edge(self.controller.player.pos):
+                self.controller.view.camera.center(self.controller.player.pos)
+            for obj in self.controller.objects:
+                self.controller.text("Name: {} Pos: {}".format(obj.name, obj.pos),
+                                     GameResources.TEXT_DIALOGUE, add=True)
+
     
     def Render(self, screen):
         self.controller.view.camera.center(self.controller.player.pos)
@@ -97,10 +135,11 @@ class GameScene(SceneBase):
         if not self.background:
             self.background = pygame.image.load('./resources/img/background_game2.png').convert_alpha()
 
-        self.text.show()
+        screen.blit(self.background, (0, 0))
         screen.blit(self.controller.view.region_view, (0,0), area=self.controller.view.camera.camera_rect)
         screen.blit(self.controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
-        screen.blit(self.background, (GameResources.CAMERA_WINDOW_SIZE[0], 0))
+        self.controller.text_display[self.current_text_display_type].show()
+
 
 
 

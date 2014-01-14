@@ -67,6 +67,7 @@ class Reader(pygame.Rect,object):
         else:
             self._original += decoded.expandtabs(4).split('\n')
         self._splitted = self.splittext()
+        self.scrollup(len(self._splitted))
 
     @property
     def TEXT(self):
@@ -163,7 +164,7 @@ class Reader(pygame.Rect,object):
 
     def show(self):
         self.screen()
-        pygame.display.update(self)
+        # pygame.display.update(self)
 
     def scrolldown(self,n):
         y = self._y
@@ -240,6 +241,26 @@ class Reader(pygame.Rect,object):
                 self._index = len(self._splitted[self._line].string)
             if self._index > len(self._splitted[self._line].string): self._index = len(self._splitted[self._line].string)
             return True
+
+    def simple_update(self,ev):
+        if ev.type == pygame.MOUSEBUTTONUP and self.collidepoint(ev.pos):
+            try:
+                if ev.click[4]:
+                    self.scrolldown(sum(range(1,ev.click[4]+1))//10+1)
+                    return True
+                elif ev.click[5]:
+                    self.scrollup(sum(range(1,ev.click[5]+1))//10+1)
+                    return True
+            except:
+                if ev.button == 4:
+                    self.scrolldown(3)
+                    return True
+
+                elif ev.button == 5:
+                    self.scrollup(3)
+                    return True
+
+
 
 class Lister(Reader):
 

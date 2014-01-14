@@ -6,14 +6,19 @@ TILE_HEIGHT = 32
 GLOBAL_WINDOW_SIZE = (800, 600)  # the global window dimension, used to initialize the pygame main surface
 CAMERA_WINDOW_SIZE = (600, 400)
 MAP_WINDOW_SIZE = (100, 100)
+TEXT_MARGIN = 15
+TEXT_BGCOLOR = (173, 158, 195)
 # Explorer Map Characteristics
 MAP_BG_COLOR = (0, 0, 0)
 MAP_VISIBLE_COLOR = (255, 255, 255)
 MAP_EXPLORED_COLOR = (120, 0, 120)
 # Game Related Characteristics
 GAME_BG_COLOR = (0, 0, 0)
+# Constants
+TEXT_DIALOGUE = "1"
+TEXT_FIGHT = "2"
 
-# Strings
+# Strings - In game
 CRITIC_SUCCESS = "Critic-Success"
 CRITIC_FAILURE = "Critic-Failure"
 SUCCESS = "Success"
