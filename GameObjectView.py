@@ -3,6 +3,7 @@ import PythonExtraLib.Pyganim as pyganim
 import pygame
 import ast
 import GameControllerView
+import GameResources
 
 
 class GameObjectView:
@@ -23,11 +24,11 @@ class GameObjectView:
                                             (sprite_surface.subsurface(rec_lists[0][1]), 0.1),
                                             (sprite_surface.subsurface(rec_lists[0][2]), 0.1)]),
                 "RIGHT": pyganim.PygAnimation([(sprite_surface.subsurface(rec_lists[1][0]), 0.1),
-                                            (sprite_surface.subsurface(rec_lists[1][1]), 0.1),
-                                            (sprite_surface.subsurface(rec_lists[1][2]), 0.1)]),
+                                               (sprite_surface.subsurface(rec_lists[1][1]), 0.1),
+                                               (sprite_surface.subsurface(rec_lists[1][2]), 0.1)]),
                 "DOWN": pyganim.PygAnimation([(sprite_surface.subsurface(rec_lists[2][0]), 0.1),
-                                            (sprite_surface.subsurface(rec_lists[2][1]), 0.1),
-                                            (sprite_surface.subsurface(rec_lists[2][2]), 0.1)]),
+                                              (sprite_surface.subsurface(rec_lists[2][1]), 0.1),
+                                              (sprite_surface.subsurface(rec_lists[2][2]), 0.1)]),
                 "LEFT": pyganim.PygAnimation([(sprite_surface.subsurface(rec_lists[3][0]), 0.1),
                                             (sprite_surface.subsurface(rec_lists[3][1]), 0.1),
                                             (sprite_surface.subsurface(rec_lists[3][2]), 0.1)])
@@ -38,6 +39,7 @@ class GameObjectView:
         self.direction = "UP"
         self.is_moving = False
         self.redraw = True
+        self.always_need_to_draw = False # used for things that can be walked over, but needs to be redrawn after...
         self._dirty_element_to_erase = []
 
     def move(self):
@@ -104,7 +106,8 @@ class GameObjectView:
                 if self.distance_to_move_x == self.distance_moved_x and self.distance_to_move_y == self.distance_moved_y:
                     self.is_moving = False
                     self.images[self.direction].stop()
-            elif self.redraw:
+            elif (self.always_need_to_draw and not self.owner.controller.is_blocked(self.owner.pos)) or self.redraw:
+                # we redraw unless this is something non blocking with a blocking object on top
                 dirty_recs += self._get_game_view().clear(self.owner.pos)
                 dirty_recs += self._get_game_view().draw(self.images[self.direction].getCurrentFrameSpecial(),
                                                          self.owner.pos)
@@ -116,6 +119,18 @@ class GameObjectView:
 
     def _get_game_view(self):
         return self.owner.controller.view
+
+    def die(self):
+        """Replace the current image by a death symbol
+        """
+        sprite_surface = pygame.image.load(GameResources.CONSTANT_IMAGE_DEATH).convert_alpha()
+        self.images = {"UP": pyganim.PygAnimation([(sprite_surface, 100)])}
+        self.animated = False
+        self.direction = "UP"
+        self.is_moving = False
+        self.redraw = True
+        self.always_need_to_draw = True
+        pass
 
 
 class PlayerView:

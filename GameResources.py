@@ -14,6 +14,10 @@ MAP_VISIBLE_COLOR = (255, 255, 255)
 MAP_EXPLORED_COLOR = (120, 0, 120)
 # Game Related Characteristics
 GAME_BG_COLOR = (0, 0, 0)
+
+# Death Image
+CONSTANT_IMAGE_DEATH = "resources/img/tumb.png"
+
 # Constants
 TEXT_DIALOGUE = "1"
 TEXT_FIGHT = "2"
@@ -27,3 +31,13 @@ FAILURE = "Failure"
 # Strategy for monsters
 TARGET_STRATEGY_CLOSEST = "Closest"
 TARGET_STRATEGY_WEAKEST = "Weakest"
+
+# Attributes
+ATTRIBUTE_COURAGE = "cou"
+ATTRIBUTE_INTELLIGENCE = "int"
+ATTRIBUTE_CHARISME = "cha"
+ATTRIBUTE_ADRESSE = "ad"
+ATTRIBUTE_FORCE = "fo"
+ATTRIBUTE_ATTAQUE = "at"
+ATTRIBUTE_PARADE = "prd"
+

@@ -2,10 +2,9 @@ __author__ = 'staug'
 import math
 import GameObjectView
 import random
-import GameController
 import GameResources
 import GameUtil
-import types
+
 
 class GameObject:
     def __init__(self,
@@ -35,8 +34,6 @@ class GameObject:
         self.ai = ai
         if self.ai:  # let the AI component know who owns it
             self.ai.object = self
-
-
 
     def draw(self):
         if not self.view:
@@ -83,7 +80,11 @@ class Player:
         if not attributes:
             self.roll_attributes()
         else:
-            names = ["cou", "int", "cha", "ad", "fo"]
+            names = [GameResources.ATTRIBUTE_COURAGE,
+                     GameResources.ATTRIBUTE_INTELLIGENCE,
+                     GameResources.ATTRIBUTE_CHARISME,
+                     GameResources.ATTRIBUTE_ADRESSE,
+                     GameResources.ATTRIBUTE_FORCE]
             for att in names:
                 self.original_attributes[att] = attributes[att]
 
@@ -97,14 +98,17 @@ class Player:
         else:
             self.work = random.choice(self.define_possible_work())
 
-
     def roll_attributes(self):
-        names = ["cou", "int", "cha", "ad", "fo"]
+        names = [GameResources.ATTRIBUTE_COURAGE,
+                 GameResources.ATTRIBUTE_INTELLIGENCE,
+                 GameResources.ATTRIBUTE_CHARISME,
+                 GameResources.ATTRIBUTE_ADRESSE,
+                 GameResources.ATTRIBUTE_FORCE]
         for att in names:
             self.original_attributes[att] = random.randint(1, 6) + 7
 
-        self.original_attributes["at"] = 8
-        self.original_attributes["prd"] = 10
+        self.original_attributes[GameResources.ATTRIBUTE_ATTAQUE] = 14
+        self.original_attributes[GameResources.ATTRIBUTE_PARADE] = 15
 
         self.original_attributes["hp"] = 20
         self.original_attributes["mp"] = 30
@@ -112,44 +116,44 @@ class Player:
 
     def define_possible_origin(self):
         possible_origins = []
-        names = ["cou", "int", "cha", "ad", "fo"]
+        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE, GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
         origin_limits = {
             "Humain": {},
             "Barbare": {
-                "cou": {"MIN": 12}, "fo": {"MIN": 13},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MIN": 13},
             },
             "Nain": {
-                "cou": {"MIN": 11}, "fo": {"MIN": 12},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Haut Elfe": {
-                "int": {"MIN": 11}, "cha": {"MIN": 12}, "ad": {"MIN": 12}, "fo": {"MAX": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 11}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MAX": 12},
             },
             "Demi Elfe": {
-                "cha": {"MIN": 10}, "ad": {"MIN": 11},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 11},
             },
             "Elfe Sylvain": {
-                "cha": {"MIN": 12}, "ad": {"MIN": 10}, "fo": {"MAX": 11},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 10}, GameResources.ATTRIBUTE_FORCE: {"MAX": 11},
             },
             "Elfe Noir": {
-                "int": {"MIN": 12}, "ad": {"MIN": 13},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13},
             },
             "Orque": {
-                "int": {"MAX": 8}, "cha": {"MAX": 10}, "fo": {"MIN": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 8}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Demi Orque": {
-                "int": {"MAX": 10}, "ad": {"MAX": 11}, "fo": {"MIN": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Gobelin": {
-                "cou": {"MAX": 10}, "int": {"MAX": 10}, "cha": {"MAX": 8}, "fo": {"MAX": 9},
+                GameResources.ATTRIBUTE_COURAGE: {"MAX": 10}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 8}, GameResources.ATTRIBUTE_FORCE: {"MAX": 9},
             },
             "Ogre": {
-                "int": {"MAX": 9}, "cha": {"MAX": 10}, "ad": {"MAX": 11}, "fo": {"MIN": 13},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 9}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 13},
             },
             "Hobbit": {
-                "cou": {"MIN": 12}, "int": {"MIN": 10}, "fo": {"MAX": 10},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_FORCE: {"MAX": 10},
             },
             "Gnome": {
-                "int": {"MIN": 10}, "ad": {"MIN": 13}, "fo": {"MAX": 8},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13}, GameResources.ATTRIBUTE_FORCE: {"MAX": 8},
             },
         }
         for origin in origin_limits.keys():
@@ -169,43 +173,43 @@ class Player:
     def define_possible_work(self):
         # TODO: race prevents some work!
         possible_works = []
-        names = ["cou", "int", "cha", "ad", "fo"]
+        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE, GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
         work_limits = {
             "Guerrier": {
-                "cou": {"MIN": 12}, "fo": {"MIN": 12},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Ninja": {
-                "ad": {"MIN": 13},
+                GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13},
             },
             "Voleur": {
-                "ad": {"MIN": 12},
+                GameResources.ATTRIBUTE_ADRESSE: {"MIN": 12},
             },
             "Pretre": {
-                "cha": {"MIN": 12},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 12},
             },
             "Mage": {
-                "int": {"MIN": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 12},
             },
             "Paladin": {
-                "cou": {"MIN": 12}, "int": {"MIN": 10}, "cha": {"MIN": 11}, "fo": {"MIN": 9},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 9},
             },
             "Ranger": {
-                "cha": {"MIN": 10}, "ad": {"MIN": 10},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 10},
             },
             "Menestrel": {
-                "cha": {"MIN": 12}, "ad": {"MIN": 11},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 11},
             },
             "Marchand": {
-                "int": {"MIN": 12}, "cha": {"MIN": 11},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 12}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 11},
             },
             "Ingenieur": {
-                "ad": {"MIN": 11},
+                GameResources.ATTRIBUTE_ADRESSE: {"MIN": 11},
             },
             "Pirate": {
-                "cou": {"MIN": 11}, "ad": {"MIN": 11},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 11}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 11},
             },
             "Bourgeois": {
-                "int": {"MIN": 10}, "cha": {"MIN": 11},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 11},
             },
         }
         for work in work_limits.keys():
@@ -231,8 +235,8 @@ class Fighter:
         self.original_attributes = {}
         if resources:
             self.original_attributes = resources
-            self.hp = self.original_attributes["hp"]
-            self.mp = self.original_attributes["mp"]
+            self.hp = int(self.original_attributes["hp"])
+            self.mp = int(self.original_attributes["mp"])
 
     def replicate_player_attributes(self, player):
         self.original_attributes = player.original_attributes
@@ -241,31 +245,31 @@ class Fighter:
 
     @property
     def cou(self):
-        return self.original_attributes["cou"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_COURAGE])
 
     @property
     def int(self):
-        return self.original_attributes["int"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_INTELLIGENCE])
 
     @property
     def cha(self):
-        return self.original_attributes["cha"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_CHARISME])
 
     @property
     def ad(self):
-        return self.original_attributes["ad"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_ADRESSE])
 
     @property
     def fo(self):
-        return self.original_attributes["fo"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_FORCE])
 
     @property
     def at(self):
-        return self.original_attributes["at"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_ATTAQUE])
 
     @property
     def prd(self):
-        return self.original_attributes["prd"]
+        return int(self.original_attributes[GameResources.ATTRIBUTE_PARADE])
 
     @property
     def mag_phy(self):
@@ -288,7 +292,7 @@ class Fighter:
         self.hp -= value
 
     def fight(self, opponent):
-        print("{} attacks {}".format(self.object.name, opponent.object.name))
+        print("{} attacks {} - Attack self = {}, parade opponent = ".format(self.object.name, opponent.object.name, self.at, opponent.prd))
         # TODO: courage fight first, critical success and failure; Remove printing
         at_test_result = GameUtil.pass_test(self.at)
         print("EVAL: " + at_test_result)
@@ -300,7 +304,21 @@ class Fighter:
             if GameResources.FAILURE in prd_test_result:
                 # Opponent did not manage to parry
                 opponent.take_damage(random.randint(self.pi[0], self.pi[1]))
+                if opponent.hp <= 0:
+                    opponent.death(playerComponent=opponent.object.player)
                 print("HP = {}".format(opponent.hp))
+
+    def death(self, playerComponent=None):
+        if not playerComponent:
+            # TODO: add player death
+            #transform it into a nasty corpse! it doesn't block, can't be
+            #attacked and doesn't move
+            self.object.view.die()
+            self.object.blocking = False
+            self.object.ai = None
+            self.object.fighter = None
+            self.object.name = "Remains of " + self.object.name
+
 
 class ArtificialIntelligence:
 
@@ -380,22 +398,33 @@ class BasicMonsterAI(ArtificialIntelligence):
         for player in controller.player_party:
             if self.object.distance_to(player) < distance:
                 closest_player = player
+                distance = self.object.distance_to(player)
         return closest_player
 
     def find_weakest_player(self):
-        pass
+        controller = self.object.controller
+        weakest_player = controller.player
+        for player in controller.player_party:
+            if player.hp < weakest_player.hp:
+                weakest_player = player
+        return weakest_player
 
     def take_turn(self):
         # find the closest enemy
+        target = None
         if self.target_strategy == GameResources.TARGET_STRATEGY_CLOSEST:
             target = self.find_closest_player()
         elif self.target_strategy == GameResources.TARGET_STRATEGY_WEAKEST:
             target = self.find_weakest_player()
+
         if self.object.distance_to(target) <= self.attack_distance:
-            self.object.fighter.fight(target.fighter)
+            if self.object.fighter:
+                self.object.fighter.fight(target.fighter)
+                if self.object: # if we are not dead...
+                    self.ticker.schedule_turn(self.speed, self) # schedule next turn
         else:
             self.move_towards(target.pos)
-        self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+            self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
 
 
 if __name__ == '__main__':
