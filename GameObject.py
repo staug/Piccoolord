@@ -338,6 +338,56 @@ class FollowerAI(ArtificialIntelligence):
         self.move_towards(player.pos)
         self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
 
+class BasicMonsterAI(ArtificialIntelligence):
+
+    def __init__(self, ticker, speed=1, target_strategy=None, attack_distance=1):
+        self.ticker = ticker
+        self.speed = 1
+        self.ticker.schedule_turn(self.speed, self)
+        if target_strategy:
+            self.target_strategy = target_strategy
+        else:
+            self.target_strategy = self.find_closest_enemy
+        self.attack_distance = attack_distance
+
+    def move_towards(self, target_pos):
+        # TODO: every x turn, compute A* algo
+        # except if distance is < x...
+        dx = target_pos[0] - self.owner.pos[0]
+        dy = target_pos[1] - self.owner.pos[1]
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+        #normalize it to length 1 (preserving direction), then round it and
+        #convert to integer so the movement is restricted to the map grid
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
+        success = self.owner.move(dx, dy)
+        tries = 0
+        while not success or tries > 5:
+            move = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            success = self.owner.move(move[0], move[1])
+            tries += 1
+
+    def find_closest_player(self):
+        controller = self.owner.owner
+        closest_player= controller.player
+        distance = self.owner.distance_to(closest_player)
+        for player in controller.player_party:
+            if self.owner.distance_to(player.owner) < distance:
+                closest_player = player
+        return closest_player.owner
+
+    def find_weakest_enemy(self):
+        pass
+
+    def take_turn(self):
+        # find the closest enemy
+        target = self.target_strategy()
+        if self.owner.distance_to(target) < self.attack_distance:
+            self.owner.fighter.fight(target.fighter)
+        else:
+            self.move_towards(target.pos)
+        self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+
 
 if __name__ == '__main__':
     playerA = Player()

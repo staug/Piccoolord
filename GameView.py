@@ -51,7 +51,7 @@ class TitleScene(SceneBase):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 # Move to the next scene when the user pressed Enter 
-                self.SwitchToScene(GameScene())
+                self.SwitchToScene(GameScene(controller=GameController.GameController()))
     
     def Update(self):
         pass
@@ -60,42 +60,54 @@ class TitleScene(SceneBase):
         # For the sake of brevity, the title scene is a blank red screen 
         screen.fill((255, 0, 0))
 
-class GameScene(SceneBase):
+
+class RollPlayerScene(SceneBase):
     def __init__(self):
         SceneBase.__init__(self)
+
+    def ProcessInput(self, events, pressed_keys):
+        for event in events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                # Move to the next scene when the user pressed Enter
+                self.SwitchToScene(GameScene(controller=GameController.GameController()))
+
+    def Update(self):
+        pass
+
+    def Render(self, screen):
+        # For the sake of brevity, the title scene is a blank red screen
+        screen.fill((255, 0, 0))
+
+
+class GameScene(SceneBase):
+    def __init__(self, controller = None):
+        SceneBase.__init__(self)
         self.background = None
-        self.controller = GameController.GameController()
-        text_dialogue = PythonExtraLib.reader.Reader("Bienvenue",
+        self.controller = controller
+        if not self.controller.is_text_initialized(GameResources.TEXT_DIALOGUE):
+            text_dialogue = PythonExtraLib.reader.Reader("Bienvenue",
                                             pos=(GameResources.TEXT_MARGIN,
                                                  GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
                                             width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
-                                            font="./PythonExtraLib/Andale-mono.ttf",
+                                            font="./PythonExtraLib/monofonto.ttf",
                                             fontsize=12,
                                             height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
                                             bg=GameResources.TEXT_BGCOLOR,
                                             fgcolor=(20,20,20))
-        self.controller.add_text_display(text_dialogue, GameResources.TEXT_DIALOGUE)
-        text_fight = PythonExtraLib.reader.Reader("Bienvenue",
+            self.controller.add_text_display(text_dialogue, GameResources.TEXT_DIALOGUE)
+        if not self.controller.is_text_initialized(GameResources.TEXT_FIGHT):
+            text_fight = PythonExtraLib.reader.Reader("Bienvenue",
                                             pos=(GameResources.TEXT_MARGIN,
                                                  GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
                                             width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
-                                            font="./PythonExtraLib/Andale-mono.ttf",
+                                            font="./PythonExtraLib/monofonto.ttf",
                                             fontsize=12,
                                             height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
                                             bg=GameResources.TEXT_BGCOLOR,
                                             fgcolor=(255,20,20))
-        self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
+            self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
         self.current_text_display_type = GameResources.TEXT_DIALOGUE
 
-        # import the player for test TODO: move to controller
-        config = ConfigParser.RawConfigParser()
-        config.read('resources/definitions.ini')
-        player = GameObject.GameObject('player', config._sections['Player'], self.controller.region.get_starting_position(), blocking=True, player=GameObject.Player())
-        self.controller.add_object(player)
-
-        p2_ai = GameObject.FollowerAI(self.controller.ticker)
-        player2 = GameObject.GameObject('player2', config._sections['Skeletton'], self.controller.region.get_starting_position(), blocking=True, ai=p2_ai, player=GameObject.Player())
-        self.controller.add_object(player2)
 
     def ProcessInput(self, events, pressed_keys):
         self.dx = self.dy = 0
@@ -183,4 +195,4 @@ def run_game(window_size, fps, starting_scene):
 
 if __name__ == '__main__':
 
-    run_game(GameResources.GLOBAL_WINDOW_SIZE, 30, GameScene())
+    run_game(GameResources.GLOBAL_WINDOW_SIZE, 30, GameScene(controller=GameController.GameController()))

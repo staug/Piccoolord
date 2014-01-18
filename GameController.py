@@ -3,17 +3,18 @@ __author__ = 'staug'
 import WorldMapLogic
 import GameControllerView
 import GameObject
+import ConfigParser
 
 class GameController:
 
     def __init__(self):
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
-        self.setup_level(0)
+        self.player_party = []
+        self.player_index = 0
         self.text_display = {}
         self._default_display_type = None
 
-        self.player_party = []
-        self.player_index = 0
+        self.setup_level(0)
 
     def setup_level(self, level_number=0):
         self.region = self.world.regions[level_number]
@@ -27,6 +28,17 @@ class GameController:
             for y in range(self.region.size[1]):
                 if self.region.grid[(x, y)].blocking:
                     self.blocks.add((x,y))
+
+        # import the player for test TODO: move to controller
+        config = ConfigParser.RawConfigParser()
+        config.read('resources/definitions.ini')
+        player = GameObject.GameObject('player', config._sections['Player'], self.region.get_starting_position(), blocking=True, player=GameObject.Player())
+        self.add_object(player)
+
+        p2_ai = GameObject.FollowerAI(self.ticker)
+        player2 = GameObject.GameObject('player2', config._sections['Skeletton'], self.region.get_starting_position(), blocking=True, ai=p2_ai, player=GameObject.Player())
+        self.add_object(player2)
+
 
     def is_blocked(self, grid_pos):
         """
@@ -57,13 +69,13 @@ class GameController:
 
     def add_object(self, obj):
         obj.owner = self
-        self.__add_remove_object(obj)
+        self._add_remove_object(obj)
 
     def remove_object(self, obj):
         obj.owner = None
-        self.__add_remove_object(obj, False)
+        self._add_remove_object(obj, False)
 
-    def __add_remove_object(self, obj, add=True):
+    def _add_remove_object(self, obj, add=True):
         if add:
             self.objects.add(obj)
             if obj.player:
@@ -81,6 +93,9 @@ class GameController:
         if not self._default_display_type:
             self._default_display_type = display_type
         self.text_display[display_type] = reader
+
+    def is_text_initialized(self, display_type):
+        return display_type in self.text_display
 
     def text(self, text, display_type=None, add=True):
         if display_type in self.text_display:
