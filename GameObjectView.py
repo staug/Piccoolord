@@ -70,7 +70,7 @@ class GameObjectView:
                 self.direction = "DOWN"
             else:
                 self.direction = "UP"
-        self.images[self.direction].play()
+        self.images[self.direction].play(startTime=self.owner.controller.clock.get_time())
 
     def draw(self):
         """
@@ -115,7 +115,7 @@ class GameObjectView:
         self.redraw = value
 
     def _get_game_view(self):
-        return self.owner.owner.view
+        return self.owner.controller.view
 
 
 class PlayerView:

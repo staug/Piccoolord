@@ -23,3 +23,7 @@ CRITIC_SUCCESS = "Critic-Success"
 CRITIC_FAILURE = "Critic-Failure"
 SUCCESS = "Success"
 FAILURE = "Failure"
+
+# Strategy for monsters
+TARGET_STRATEGY_CLOSEST = "Closest"
+TARGET_STRATEGY_WEAKEST = "Weakest"

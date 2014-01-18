@@ -7,13 +7,13 @@ import ConfigParser
 
 class GameController:
 
-    def __init__(self):
+    def __init__(self, clock):
         self.world = WorldMapLogic.World("Piccool Dungeon", 3, (80, 80), (120, 120), 40, 60)
-        self.player_party = []
-        self.player_index = 0
         self.text_display = {}
         self._default_display_type = None
-
+        self.player_party = []
+        self.player_index = 0
+        self.clock = clock
         self.setup_level(0)
 
     def setup_level(self, level_number=0):
@@ -29,16 +29,20 @@ class GameController:
                 if self.region.grid[(x, y)].blocking:
                     self.blocks.add((x,y))
 
-        # import the player for test TODO: move to controller
+        #TODO; move this out later!
+        # import the player for test
         config = ConfigParser.RawConfigParser()
         config.read('resources/definitions.ini')
-        player = GameObject.GameObject('player', config._sections['Player'], self.region.get_starting_position(), blocking=True, player=GameObject.Player())
+
+        player = GameObject.GameObject('Player_1', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, player=GameObject.Player(), fighter=GameObject.Fighter())
         self.add_object(player)
 
-        p2_ai = GameObject.FollowerAI(self.ticker)
-        player2 = GameObject.GameObject('player2', config._sections['Skeletton'], self.region.get_starting_position(), blocking=True, ai=p2_ai, player=GameObject.Player())
-        self.add_object(player2)
+        #player2 = GameObject.GameObject('Player_2', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, ai=GameObject.FollowerAI(self.ticker), player=GameObject.Player(), fighter=GameObject.Fighter())
+        #self.add_object(player2)
 
+        for i in range(50):
+            monster = GameObject.GameObject('Skeletton_'+str(i), config._sections['Skeletton'], self.region.get_starting_position(), blocking=True, ai=GameObject.BasicMonsterAI(self.ticker), fighter=GameObject.Fighter(config._sections['Skeletton']))
+            self.add_object(monster)
 
     def is_blocked(self, grid_pos):
         """
@@ -68,14 +72,14 @@ class GameController:
         return all_blocks
 
     def add_object(self, obj):
-        obj.owner = self
-        self._add_remove_object(obj)
+        obj.controller = self
+        self.__add_remove_object(obj)
 
     def remove_object(self, obj):
-        obj.owner = None
-        self._add_remove_object(obj, False)
+        obj.controller = None
+        self.__add_remove_object(obj, False)
 
-    def _add_remove_object(self, obj, add=True):
+    def __add_remove_object(self, obj, add=True):
         if add:
             self.objects.add(obj)
             if obj.player:
@@ -94,9 +98,6 @@ class GameController:
             self._default_display_type = display_type
         self.text_display[display_type] = reader
 
-    def is_text_initialized(self, display_type):
-        return display_type in self.text_display
-
     def text(self, text, display_type=None, add=True):
         if display_type in self.text_display:
             if add:
@@ -109,6 +110,14 @@ class GameController:
             else:
                 self.text_display[self._default_display_type].TEXT = text
         print(text)
+
+    def is_text_initialized(self, display_type):
+        return display_type in self.text_display
+
+    def get_monster_at(self, pos):
+        for possible_fighter in self.objects:
+            if possible_fighter.pos == pos and possible_fighter.fighter and not possible_fighter.player:
+                return possible_fighter
 
 class Ticker(object):
     """Simple timer for roguelike games.
@@ -207,8 +216,6 @@ if __name__ == '__main__':
             a_controller.view.explorer_map.center(a_controller.player.pos)
             if a_controller.view.camera.close_edge(a_controller.player.pos):
                 a_controller.view.camera.center(a_controller.player.pos)
-            for obj in a_controller.objects:
-                print("Name: {} Pos: {}".format(obj.name, obj.pos))
 
 
         for obj in a_controller.objects:

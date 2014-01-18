@@ -129,14 +129,17 @@ class GameScene(SceneBase):
 
     def Update(self):
         #Call the other objects take action if the player acted
-        if (self.dx != 0 or self.dy != 0) and (self.controller.player.move(self.dx, self.dy)):
-            self.controller.ticker.next_turn()
+        if self.dx != 0 or self.dy != 0:
+            monster_at_move = self.controller.get_monster_at((self.controller.player.pos[0]+self.dx, self.controller.player.pos[1]+self.dy))
+            if monster_at_move:
+                self.controller.player.fighter.fight(monster_at_move.fighter)
+                self.controller.ticker.next_turn()
+            elif self.controller.player.move(self.dx, self.dy):
+                self.controller.ticker.next_turn()
 
             if self.controller.view.camera.close_edge(self.controller.player.pos):
                 self.controller.view.camera.center(self.controller.player.pos)
-            for obj in self.controller.objects:
-                self.controller.text("Name: {} Pos: {}".format(obj.name, obj.pos),
-                                     GameResources.TEXT_DIALOGUE, add=True)
+
 
     
     def Render(self, screen):
@@ -156,10 +159,9 @@ class GameScene(SceneBase):
 
 
 def run_game(window_size, fps, starting_scene):
-    pygame.init()
-    screen = pygame.display.set_mode(window_size, 0, 32)
+    PygameInit()
     clock = pygame.time.Clock()
-
+    screen = pygame.display.get_surface()
     active_scene = starting_scene
 
     while active_scene != None:
@@ -194,5 +196,5 @@ def run_game(window_size, fps, starting_scene):
         clock.tick(fps)
 
 if __name__ == '__main__':
-
-    run_game(GameResources.GLOBAL_WINDOW_SIZE, 30, GameScene(controller=GameController.GameController()))
+    PygameInit()
+    run_game(GameResources.GLOBAL_WINDOW_SIZE, 30, GameScene(controller=GameController.GameController(pygame.time.Clock())))
