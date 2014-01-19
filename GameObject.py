@@ -360,17 +360,30 @@ class FollowerAI(ArtificialIntelligence):
         self.move_towards(player.pos)
         self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
 
+
 class HumanPlayerAI(ArtificialIntelligence):
 
     def __init__(self, ticker):
         self.ticker = ticker
-        self.speed = 1
+        self.speed = 2
         self.ticker.schedule_turn(self.speed, self)
 
     def take_turn(self):
-        player = self.object.controller.player
-        self.move_towards(player.pos)
-        self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+        self.object.controller.scene.player_took_action = False
+        (dx, dy) = (self.object.controller.scene.dx, self.object.controller.scene.dy)
+        if dx == dy == 0:
+            self.ticker.schedule_turn(0, self)
+        else:
+            monster_at_destination = self.object.controller.get_monster_at((self.object.pos[0]+dx, self.object.pos[1]+dy))
+            if monster_at_destination:
+                self.object.fighter.fight(monster_at_destination.fighter)
+                self.object.controller.scene.player_took_action = True
+            elif self.object.controller.player.move(dx, dy):
+                self.object.controller.scene.player_took_action = True
+
+        if self.object.controller.scene.player_took_action:
+            self.ticker.schedule_turn(self.speed, self)
+
 
 class BasicMonsterAI(ArtificialIntelligence):
 

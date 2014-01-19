@@ -34,7 +34,7 @@ class GameController:
         config = ConfigParser.RawConfigParser()
         config.read('resources/definitions.ini')
 
-        player = GameObject.GameObject('Player_1', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, player=GameObject.Player(), fighter=GameObject.Fighter())
+        player = GameObject.GameObject('Player_1', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, player=GameObject.Player(), fighter=GameObject.Fighter(), ai=GameObject.HumanPlayerAI(self.ticker))
         self.add_object(player)
 
         #player2 = GameObject.GameObject('Player_2', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, ai=GameObject.FollowerAI(self.ticker), player=GameObject.Player(), fighter=GameObject.Fighter())
@@ -135,7 +135,6 @@ class Ticker(object):
         things_to_do = self.schedule.pop(self.ticks, [])
         for obj in things_to_do:
             obj.take_turn()
-
 
 if __name__ == '__main__':
     # The following is for the test only

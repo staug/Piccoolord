@@ -110,8 +110,7 @@ class GameScene(SceneBase):
                                             fgcolor=(255,20,20))
             self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
         self.current_text_display_type = GameResources.TEXT_DIALOGUE
-        self.player_acted = True
-
+        self.player_took_action = True
 
     def ProcessInput(self, events, pressed_keys):
         self.dx = self.dy = 0
@@ -125,20 +124,26 @@ class GameScene(SceneBase):
                     self.dx = -1
                 elif event.key == pygame.K_RIGHT:
                     self.dx = 1
-                elif event.key == pygame.K_c:
+
+                if event.key == pygame.K_c:
                     self.controller.view.camera.center(self.controller.player.pos)
 
             self.controller.text_display[self.current_text_display_type].simple_update(event)
 
     def Update(self):
-        #Call the other objects take action if the player acted
-        if self.dx != 0 or self.dy != 0:
-            monster_at_move = self.controller.get_monster_at((self.controller.player.pos[0]+self.dx, self.controller.player.pos[1]+self.dy))
-            if monster_at_move:
-                self.controller.player.fighter.fight(monster_at_move.fighter)
-                self.controller.ticker.next_turn()
-            elif self.controller.player.move(self.dx, self.dy):
-                self.controller.ticker.next_turn()
+        #Call the objects take action
+        if self.player_took_action:
+            self.controller.ticker.next_turn()
+        else:
+            self.controller.ticker.next_turn(increment=0)  # we stay on the same turn while the player did not act
+
+        # if self.dx != 0 or self.dy != 0:
+        #     monster_at_move = self.controller.get_monster_at((self.controller.player.pos[0]+self.dx, self.controller.player.pos[1]+self.dy))
+        #     if monster_at_move:
+        #         self.controller.player.fighter.fight(monster_at_move.fighter)
+        #         self.controller.ticker.next_turn()
+        #     elif self.controller.player.move(self.dx, self.dy):
+        #         self.controller.ticker.next_turn()
     
     def Render(self, screen):
         if self.controller.view.camera.close_edge(self.controller.player.pos):
