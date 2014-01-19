@@ -84,6 +84,9 @@ class GameScene(SceneBase):
         SceneBase.__init__(self)
         self.background = None
         self.controller = controller
+        controller.scene = self
+        self.dx = self.dy = 0
+
         if not self.controller.is_text_initialized(GameResources.TEXT_DIALOGUE):
             text_dialogue = PythonExtraLib.reader.Reader("Bienvenue",
                                             pos=(GameResources.TEXT_MARGIN,
@@ -107,6 +110,7 @@ class GameScene(SceneBase):
                                             fgcolor=(255,20,20))
             self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
         self.current_text_display_type = GameResources.TEXT_DIALOGUE
+        self.player_acted = True
 
 
     def ProcessInput(self, events, pressed_keys):
@@ -114,18 +118,17 @@ class GameScene(SceneBase):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.dy -= 1
+                    self.dy = -1
                 elif event.key == pygame.K_DOWN:
-                    self.dy += 1
+                    self.dy = 1
                 elif event.key == pygame.K_LEFT:
-                    self.dx -= 1
+                    self.dx = -1
                 elif event.key == pygame.K_RIGHT:
-                    self.dx += 1
+                    self.dx = 1
                 elif event.key == pygame.K_c:
                     self.controller.view.camera.center(self.controller.player.pos)
 
             self.controller.text_display[self.current_text_display_type].simple_update(event)
-
 
     def Update(self):
         #Call the other objects take action if the player acted
@@ -136,14 +139,11 @@ class GameScene(SceneBase):
                 self.controller.ticker.next_turn()
             elif self.controller.player.move(self.dx, self.dy):
                 self.controller.ticker.next_turn()
-
-            if self.controller.view.camera.close_edge(self.controller.player.pos):
-                self.controller.view.camera.center(self.controller.player.pos)
-
-
     
     def Render(self, screen):
-        self.controller.view.camera.center(self.controller.player.pos)
+        if self.controller.view.camera.close_edge(self.controller.player.pos):
+            self.controller.view.camera.center(self.controller.player.pos)
+
         for obj in self.controller.objects:
             obj.draw()
 
