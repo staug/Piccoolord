@@ -70,6 +70,18 @@ class GameControllerView:
                     elif (x,y) not in self.shadowed_position:
                         self._get_subsurface((x, y)).blit(dark, (0, 0))
 
+    def handle_events(self, ev):
+        """
+        Handle all events in the zone.
+        @param ev: A pygame event
+        @return: The tile position that was clicked
+        """
+        if ev.type == pygame.MOUSEBUTTONUP and pygame.Rect((0, 0), GameResources.CAMERA_WINDOW_SIZE).collidepoint(ev.pos):
+            # We assume that the top of this window is always at (0,0)
+            print("Mouseclick pos: {}, camera rect topleft: {}".format(ev.pos, self.camera.camera_rect.topleft))
+            tile_x = int((ev.pos[0] + self.camera.camera_rect.left) / GameResources.TILE_WIDTH)
+            tile_y = int((ev.pos[1] + self.camera.camera_rect.top) / GameResources.TILE_HEIGHT)
+            return (tile_x, tile_y)
 
 class Camera:
 
@@ -106,6 +118,7 @@ class Camera:
             self.camera_rect.top = max(0, self.camera_rect.top)
             self.camera_rect.right = min(self.owner.region_view.get_rect().right, self.camera_rect.right)
             self.camera_rect.bottom = min(self.owner.region_view.get_rect().bottom, self.camera_rect.bottom)
+
 
 
 class ExplorerMap:

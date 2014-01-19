@@ -88,7 +88,7 @@ class GameScene(SceneBase):
         self.dx = self.dy = 0
 
         if not self.controller.is_text_initialized(GameResources.TEXT_DIALOGUE):
-            text_dialogue = PythonExtraLib.reader.Reader("Bienvenue",
+            text_dialogue = PythonExtraLib.reader.Reader("Bienvenue - Dialogues mode",
                                             pos=(GameResources.TEXT_MARGIN,
                                                  GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
                                             width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
@@ -99,7 +99,7 @@ class GameScene(SceneBase):
                                             fgcolor=(20,20,20))
             self.controller.add_text_display(text_dialogue, GameResources.TEXT_DIALOGUE)
         if not self.controller.is_text_initialized(GameResources.TEXT_FIGHT):
-            text_fight = PythonExtraLib.reader.Reader("Bienvenue",
+            text_fight = PythonExtraLib.reader.Reader("Bienvenue - Combat mode",
                                             pos=(GameResources.TEXT_MARGIN,
                                                  GameResources.CAMERA_WINDOW_SIZE[1] + GameResources.TEXT_MARGIN),
                                             width=GameResources.CAMERA_WINDOW_SIZE[0]-2*GameResources.TEXT_MARGIN,
@@ -129,6 +129,14 @@ class GameScene(SceneBase):
                     self.controller.view.camera.center(self.controller.player.pos)
 
             self.controller.text_display[self.current_text_display_type].simple_update(event)
+            # Click in the game window
+            pos = self.controller.view.handle_events(event)
+            if pos:
+                output = str(self.controller.region.grid[pos])
+                for an_object in self.controller.objects:
+                    if an_object.pos == pos:
+                        output += an_object.name
+                self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = output
 
     def Update(self):
         #Call the objects take action
@@ -136,14 +144,6 @@ class GameScene(SceneBase):
             self.controller.ticker.next_turn()
         else:
             self.controller.ticker.next_turn(increment=0)  # we stay on the same turn while the player did not act
-
-        # if self.dx != 0 or self.dy != 0:
-        #     monster_at_move = self.controller.get_monster_at((self.controller.player.pos[0]+self.dx, self.controller.player.pos[1]+self.dy))
-        #     if monster_at_move:
-        #         self.controller.player.fighter.fight(monster_at_move.fighter)
-        #         self.controller.ticker.next_turn()
-        #     elif self.controller.player.move(self.dx, self.dy):
-        #         self.controller.ticker.next_turn()
     
     def Render(self, screen):
         if self.controller.view.camera.close_edge(self.controller.player.pos):

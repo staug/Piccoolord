@@ -441,7 +441,7 @@ class Tile():
         self.part_of = None
 
     def __str__(self):
-        return "Tile at " + self.position
+        return "Tile at " + str(self.position)
 
     @property
     def blocking(self):

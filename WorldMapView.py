@@ -158,3 +158,5 @@ class RegionView(View):
         if tile.tile_type == WorldMapLogic.Tile.GRID_FLOOR:
             return 0
         return 1
+
+
