@@ -34,15 +34,17 @@ class GameController:
         config = ConfigParser.RawConfigParser()
         config.read('resources/definitions.ini')
 
+        for i in range(50):
+            monster = GameObject.GameObject('Skeletton_'+str(i), config._sections['Skeletton'], self.region.get_starting_position(), blocking=True, ai=GameObject.BasicMonsterAI(self.ticker), fighter=GameObject.Fighter(config._sections['Skeletton']))
+            self.add_object(monster)
+
         player = GameObject.GameObject('Player_1', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, player=GameObject.Player(), fighter=GameObject.Fighter(), ai=GameObject.HumanPlayerAI(self.ticker))
         self.add_object(player)
 
         #player2 = GameObject.GameObject('Player_2', config._sections['Player_image_1'], self.region.get_starting_position(), blocking=True, ai=GameObject.FollowerAI(self.ticker), player=GameObject.Player(), fighter=GameObject.Fighter())
         #self.add_object(player2)
 
-        for i in range(50):
-            monster = GameObject.GameObject('Skeletton_'+str(i), config._sections['Skeletton'], self.region.get_starting_position(), blocking=True, ai=GameObject.BasicMonsterAI(self.ticker), fighter=GameObject.Fighter(config._sections['Skeletton']))
-            self.add_object(monster)
+
 
     def is_blocked(self, grid_pos):
         """

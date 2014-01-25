@@ -70,9 +70,9 @@ class GameControllerView:
                     elif (x,y) not in self.shadowed_position:
                         self._get_subsurface((x, y)).blit(dark, (0, 0))
 
-    def handle_events(self, ev):
+    def handle_events_camera_zone(self, ev):
         """
-        Handle all events in the zone.
+        Handle all events in the camera game zone.
         @param ev: A pygame event
         @return: The tile position that was clicked
         """
@@ -82,6 +82,18 @@ class GameControllerView:
             tile_x = int((ev.pos[0] + self.camera.camera_rect.left) / GameResources.TILE_WIDTH)
             tile_y = int((ev.pos[1] + self.camera.camera_rect.top) / GameResources.TILE_HEIGHT)
             return (tile_x, tile_y)
+
+    def handle_events_button_menu(self, ev):
+        """
+        Handle all events that relates to menu button.
+        @param ev: A pygame event
+        @return: The button that was pushed (definition in GameResources
+        """
+        if ev.type == pygame.MOUSEBUTTONUP:
+            if pygame.Rect(GameResources.BUTTON_MAIN_TEXTTYPEDIALOGUE_RECT).collidepoint(ev.pos):
+                return GameResources.BUTTON_MAIN_TEXTTYPEDIALOGUE_NAME
+            elif pygame.Rect(GameResources.BUTTON_MAIN_TEXTTYPEFIGHT_RECT).collidepoint(ev.pos):
+                return GameResources.BUTTON_MAIN_TEXTTYPEFIGHT_NAME
 
 class Camera:
 

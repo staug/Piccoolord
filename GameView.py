@@ -130,13 +130,20 @@ class GameScene(SceneBase):
 
             self.controller.text_display[self.current_text_display_type].simple_update(event)
             # Click in the game window
-            pos = self.controller.view.handle_events(event)
+            pos = self.controller.view.handle_events_camera_zone(event)
             if pos:
                 output = str(self.controller.region.grid[pos])
                 for an_object in self.controller.objects:
                     if an_object.pos == pos:
-                        output += an_object.name
+                        output += str(an_object)
                 self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = output
+            # click on one of the button
+            button_pushed = self.controller.view.handle_events_button_menu(event)
+            if button_pushed:
+                if button_pushed == GameResources.BUTTON_MAIN_TEXTTYPEFIGHT_NAME:
+                    self.current_text_display_type = GameResources.TEXT_FIGHT
+                elif button_pushed == GameResources.BUTTON_MAIN_TEXTTYPEDIALOGUE_NAME:
+                    self.current_text_display_type = GameResources.TEXT_DIALOGUE
 
     def Update(self):
         #Call the objects take action

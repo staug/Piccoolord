@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cef72215-973e-4883-a0a9-d93cab4fa349" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PythonExtraLib/Andale-mono.ttf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameController.py" afterPath="$PROJECT_DIR$/GameController.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameControllerView.py" afterPath="$PROJECT_DIR$/GameControllerView.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameObject.py" afterPath="$PROJECT_DIR$/GameObject.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameResources.py" afterPath="$PROJECT_DIR$/GameResources.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameUtil.py" afterPath="$PROJECT_DIR$/GameUtil.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameView.py" afterPath="$PROJECT_DIR$/GameView.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Piccoolord.iml" afterPath="$PROJECT_DIR$/.idea/Piccoolord.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WorldMapLogic.py" afterPath="$PROJECT_DIR$/WorldMapLogic.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WorldMapView.py" afterPath="$PROJECT_DIR$/WorldMapView.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Piccoolord.iws" />
@@ -31,19 +33,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GameView.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="GameView.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameView.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="144" column="13" selection-start="5920" selection-end="5920" vertical-scroll-proportion="0.8543689" vertical-offset="1542" max-vertical-offset="3060">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WorldMapLogic.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="443" column="46" selection-start="22650" selection-end="22650" vertical-scroll-proportion="0.0" vertical-offset="6274" max-vertical-offset="7260">
+            <state line="138" column="82" selection-start="5704" selection-end="5765" vertical-scroll-proportion="0.0" vertical-offset="2346" max-vertical-offset="3689">
               <folding />
             </state>
           </provider>
@@ -52,34 +45,16 @@
       <file leaf-file-name="GameControllerView.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameControllerView.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="34" selection-start="4481" selection-end="4481" vertical-scroll-proportion="0.0" vertical-offset="912" max-vertical-offset="7545">
+            <state line="85" column="33" selection-start="4516" selection-end="4541" vertical-scroll-proportion="0.0" vertical-offset="1445" max-vertical-offset="8806">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reader.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PythonExtraLib/reader.py">
+      <file leaf-file-name="WorldMapResources.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WorldMapResources.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="261" column="0" selection-start="8521" selection-end="9147" vertical-scroll-proportion="0.0" vertical-offset="3417" max-vertical-offset="5910">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="example_reader.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PythonExtraLib/example_reader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="27" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="930">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="285">
+            <state line="0" column="0" selection-start="0" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4046">
               <folding />
             </state>
           </provider>
@@ -88,7 +63,16 @@
       <file leaf-file-name="definitions.ini" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/definitions.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="4" selection-start="1595" selection-end="1595" vertical-scroll-proportion="0.0" vertical-offset="930" max-vertical-offset="5070">
+            <state line="62" column="4" selection-start="1595" selection-end="1595" vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="5746">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GameObjectView.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GameObjectView.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="124" column="11" selection-start="6675" selection-end="6675" vertical-scroll-proportion="0.0" vertical-offset="2108" max-vertical-offset="2567">
               <folding />
             </state>
           </provider>
@@ -97,25 +81,47 @@
       <file leaf-file-name="GameUtil.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameUtil.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="4" selection-start="75" selection-end="75" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="2160">
-              <folding />
+            <state line="18" column="69" selection-start="716" selection-end="716" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="2482">
+              <folding>
+                <marker date="1390514147661" expanded="true" signature="213:716" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Pyganim.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PythonExtraLib/Pyganim.py">
+      <file leaf-file-name="GameObject.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GameObject.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="261" column="46" selection-start="11343" selection-end="11343" vertical-scroll-proportion="0.0" vertical-offset="3881" max-vertical-offset="12870">
+            <state line="407" column="55" selection-start="15904" selection-end="15904" vertical-scroll-proportion="-0.07683616" vertical-offset="6919" max-vertical-offset="8483">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rm13.png" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/img/animated/multi/rm13.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
+      <file leaf-file-name="WorldMapLogic.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="442" column="22" selection-start="22603" selection-end="22603" vertical-scroll-proportion="0.0" vertical-offset="7514" max-vertical-offset="8262">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GameController.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GameController.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="43" column="6" selection-start="1703" selection-end="1703" vertical-scroll-proportion="0.0" vertical-offset="731" max-vertical-offset="3995">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GameResources.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GameResources.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="44" column="44" selection-start="1076" selection-end="1076" vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="918">
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
@@ -129,37 +135,38 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/resources/Ideas.txt" />
-        <option value="$PROJECT_DIR$/WorldMapResources.py" />
-        <option value="$PROJECT_DIR$/resources/3pp/example_reader.py" />
-        <option value="$PROJECT_DIR$/resources/3pp/reader.py" />
         <option value="$PROJECT_DIR$/Game.py" />
         <option value="$PROJECT_DIR$/PythonExtraLib/Pyganim.py" />
         <option value="$PROJECT_DIR$/GameLogic.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/GameUtil.py" />
         <option value="$PROJECT_DIR$/PythonExtraLib/example_reader.py" />
+        <option value="$PROJECT_DIR$/WorldMapView.py" />
         <option value="$PROJECT_DIR$/PythonExtraLib/reader.py" />
-        <option value="$PROJECT_DIR$/GameResources.py" />
         <option value="$PROJECT_DIR$/resources/definitions.ini" />
         <option value="$PROJECT_DIR$/GameObjectView.py" />
+        <option value="$PROJECT_DIR$/WorldMapLogic.py" />
+        <option value="$PROJECT_DIR$/GameResources.py" />
+        <option value="$PROJECT_DIR$/GameControllerView.py" />
+        <option value="$PROJECT_DIR$/GameView.py" />
+        <option value="$PROJECT_DIR$/GameUtil.py" />
         <option value="$PROJECT_DIR$/GameController.py" />
         <option value="$PROJECT_DIR$/GameObject.py" />
-        <option value="$PROJECT_DIR$/WorldMapView.py" />
-        <option value="$PROJECT_DIR$/GameControllerView.py" />
-        <option value="$PROJECT_DIR$/WorldMapLogic.py" />
-        <option value="$PROJECT_DIR$/GameView.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
-    <option name="y" value="138" />
-    <option name="width" value="1925" />
-    <option name="height" value="1167" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -187,7 +194,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -254,18 +260,19 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/WorldMapLogic.py" />
-    <property name="FullScreen" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="SearchEverywhereHistory" value="tExT_MA" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/WorldMapLogic.py" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="FullScreen" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -591,19 +598,7 @@
       <created>1390042845225</created>
       <updated>1390042845225</updated>
     </task>
-    <task id="LOCAL-00009" summary="Monsters now die">
-      <created>1390062464825</created>
-      <updated>1390062464825</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Before review player movements">
-      <created>1390119931879</created>
-      <updated>1390119931879</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Player now obeys to speed principle. New Human AI Created">
-      <created>1390121615453</created>
-      <updated>1390121615453</updated>
-    </task>
-    <option name="localTasksCounter" value="12" />
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -627,24 +622,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="138" width="1925" height="1167" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29533213" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853025" sideWeight="0.49963635" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916266" sideWeight="0.31927273" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297491" sideWeight="0.31927273" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24658254" sideWeight="0.71428573" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26445848" sideWeight="0.71384615" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26302084" sideWeight="0.6461039" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39557266" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.68072724" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35611165" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3538961" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854578" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32756963" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3266129" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -671,10 +666,7 @@
     <MESSAGE value="AStar algo&#10;Player origin and work continued" />
     <MESSAGE value="Added main game window" />
     <MESSAGE value="Fight improved" />
-    <MESSAGE value="Monsters now die" />
-    <MESSAGE value="Before review player movements" />
-    <MESSAGE value="Player now obeys to speed principle. New Human AI Created" />
-    <option name="LAST_COMMIT_MESSAGE" value="Player now obeys to speed principle. New Human AI Created" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fight improved" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -682,156 +674,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/GameResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="33" selection-start="343" selection-end="343" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObjectView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="39" selection-start="3672" selection-end="3672" vertical-scroll-proportion="0.0" vertical-offset="111" max-vertical-offset="1860" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObject.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="22" selection-start="2846" selection-end="2846" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1545" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="153" column="42" selection-start="5045" selection-end="5045" vertical-scroll-proportion="0.0" vertical-offset="2295" max-vertical-offset="2565" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="448" column="8" selection-start="22767" selection-end="22767" vertical-scroll-proportion="0.0" vertical-offset="6720" max-vertical-offset="7275" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/Ideas.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="566" selection-end="566" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1545" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="19" selection-start="2843" selection-end="2843" vertical-scroll-proportion="0.0" vertical-offset="11" max-vertical-offset="1665" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/definitions.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="18" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="4125" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PythonExtraLib/Pyganim.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="0" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.0" vertical-offset="225" max-vertical-offset="12870" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/Ideas.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="566" selection-end="566" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="446" column="17" selection-start="22663" selection-end="22666" vertical-scroll-proportion="0.0" vertical-offset="6690" max-vertical-offset="7050" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1545" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="38" selection-start="3564" selection-end="3564" vertical-scroll-proportion="0.0" vertical-offset="1560" max-vertical-offset="2025" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObjectView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="36" selection-start="156" selection-end="156" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="1140" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObject.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="0" selection-start="1233" selection-end="1233" vertical-scroll-proportion="0.0" vertical-offset="570" max-vertical-offset="660" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameControllerView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="17" selection-start="392" selection-end="392" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="1530" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="16" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="240" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/Ideas.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="24" selection-start="409" selection-end="409" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="750" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="446" column="17" selection-start="22663" selection-end="22666" vertical-scroll-proportion="0.0" vertical-offset="6690" max-vertical-offset="7080" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1545" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="125" column="0" selection-start="4190" selection-end="4190" vertical-scroll-proportion="0.0" vertical-offset="1875" max-vertical-offset="2025" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameControllerView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="31" selection-start="2482" selection-end="2482" vertical-scroll-proportion="0.0" vertical-offset="878" max-vertical-offset="1545" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="16" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="240" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="422" column="29" selection-start="22015" selection-end="22015" vertical-scroll-proportion="0.0" vertical-offset="5587" max-vertical-offset="7050" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="192" column="11" selection-start="18519" selection-end="18519" vertical-scroll-proportion="0.0" vertical-offset="2692" max-vertical-offset="3570" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-1247972723/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4999" column="4" selection-start="171250" selection-end="171250" vertical-scroll-proportion="0.33281493" vertical-offset="74771" max-vertical-offset="76140" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="5" selection-start="547" selection-end="547" vertical-scroll-proportion="1.0455765" vertical-offset="0" max-vertical-offset="870" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="23" vertical-scroll-proportion="-4.5520997" vertical-offset="2927" max-vertical-offset="3570" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/img/background_game2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/img/animated/multi/rm18.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -852,11 +694,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-1247972723/time.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.2597201" vertical-offset="810" max-vertical-offset="4620" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/img/animated/multi/rm19.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -864,7 +701,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PythonExtraLib/Pyganim.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="261" column="46" selection-start="11343" selection-end="11343" vertical-scroll-proportion="0.0" vertical-offset="461" max-vertical-offset="12870">
+        <state line="261" column="46" selection-start="11343" selection-end="11343" vertical-scroll-proportion="0.0" vertical-offset="461" max-vertical-offset="12870" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameResources.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="44" selection-start="1076" selection-end="1076" vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="918">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="442" column="22" selection-start="22603" selection-end="22603" vertical-scroll-proportion="0.0" vertical-offset="7510" max-vertical-offset="8228">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameObjectView.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="124" column="11" selection-start="6675" selection-end="6675" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="2567">
           <folding />
         </state>
       </provider>
@@ -876,95 +732,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="file://$PROJECT_DIR$/GameUtil.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="990">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/Ideas.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="600" selection-end="600" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObject.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="377" column="38" selection-start="14575" selection-end="14575" vertical-scroll-proportion="0.0" vertical-offset="2814" max-vertical-offset="7140">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameObjectView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="0" selection-start="2405" selection-end="2405" vertical-scroll-proportion="-1.5273011" vertical-offset="1624" max-vertical-offset="2265">
+        <state line="18" column="69" selection-start="716" selection-end="716" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2448">
           <folding>
-            <element signature="e#21#61#0" expanded="true" />
+            <marker date="1390514147661" expanded="true" signature="213:716" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapView.py">
+    <entry file="file://$PROJECT_DIR$/WorldMapResources.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="161" column="0" selection-start="13347" selection-end="13347" vertical-scroll-proportion="2.1779935" vertical-offset="1024" max-vertical-offset="2475">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameUtil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="4" selection-start="75" selection-end="75" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2160">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameResources.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="47" selection-start="546" selection-end="546" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="735">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameControllerView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="34" selection-start="4481" selection-end="4481" vertical-scroll-proportion="0.0" vertical-offset="912" max-vertical-offset="7545">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="8" selection-start="2385" selection-end="2508" vertical-scroll-proportion="0.0" vertical-offset="405" max-vertical-offset="3450">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WorldMapLogic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="443" column="46" selection-start="22650" selection-end="22650" vertical-scroll-proportion="0.0" vertical-offset="6274" max-vertical-offset="7260">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PythonExtraLib/reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="261" column="0" selection-start="8521" selection-end="9147" vertical-scroll-proportion="0.0" vertical-offset="3417" max-vertical-offset="5910">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PythonExtraLib/example_reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="27" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="930">
+        <state line="0" column="0" selection-start="0" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4046">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GameView.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="144" column="13" selection-start="5920" selection-end="5920" vertical-scroll-proportion="0.8543689" vertical-offset="1542" max-vertical-offset="3060">
+        <state line="138" column="82" selection-start="5704" selection-end="5765" vertical-scroll-proportion="0.0" vertical-offset="1870" max-vertical-offset="3587">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameControllerView.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="85" column="33" selection-start="4516" selection-end="4541" vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="8755">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="6" selection-start="1703" selection-end="1703" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3944">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameObject.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="407" column="55" selection-start="15904" selection-end="15904" vertical-scroll-proportion="-0.07683616" vertical-offset="6919" max-vertical-offset="8483">
           <folding />
         </state>
       </provider>

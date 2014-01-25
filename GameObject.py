@@ -1,4 +1,5 @@
-__author__ = 'staug'
+# -*- coding: utf-8 -*-
+# __author__ = 'staug'
 import math
 import GameObjectView
 import random
@@ -69,6 +70,11 @@ class GameObject:
         dy = other_object.pos[1] - self.pos[1]
         return math.sqrt(dx ** 2 + dy ** 2)
 
+    def __str__(self):
+        result = self.name
+        if self.fighter:
+            result = result + "[" + str(self.fighter) + "]"
+        return result
 
 class Player:
 
@@ -290,23 +296,8 @@ class Fighter:
 
     def take_damage(self, value):
         self.hp -= value
-
-    def fight(self, opponent):
-        print("{} attacks {} - Attack self = {}, parade opponent = ".format(self.object.name, opponent.object.name, self.at, opponent.prd))
-        # TODO: courage fight first, critical success and failure; Remove printing
-        at_test_result = GameUtil.pass_test(self.at)
-        print("EVAL: " + at_test_result)
-        if GameResources.SUCCESS in at_test_result:
-            # Success for attack, try to pary
-            print("PARADE")
-            prd_test_result = GameUtil.pass_test(opponent.prd)
-            print("EVAL: " + prd_test_result)
-            if GameResources.FAILURE in prd_test_result:
-                # Opponent did not manage to parry
-                opponent.take_damage(random.randint(self.pi[0], self.pi[1]))
-                if opponent.hp <= 0:
-                    opponent.death(playerComponent=opponent.object.player)
-                print("HP = {}".format(opponent.hp))
+        if self.hp <= 0:
+            self.death(playerComponent=self.object.player)
 
     def death(self, playerComponent=None):
         if not playerComponent:
@@ -315,9 +306,41 @@ class Fighter:
             #attacked and doesn't move
             self.object.view.die()
             self.object.blocking = False
-            self.object.ai = None
-            self.object.fighter = None
-            self.object.name = "Remains of " + self.object.name
+            self.object.ai = self.object.fighter = None
+            self.object.name = "Restes de " + self.object.name
+
+    def __str__(self):
+        return "COU={}, INT={}, CHA={}, FO={}, AT={}, PRD={}".format(
+            self.cou, self.int, self.cha, self.fo, self.at, self.prd
+        )
+
+    def fight(self, opponent):
+        # TODO: adapt for multiple enemies?
+        if self.cou > opponent.cou:
+            self._fight_round(opponent)
+            if opponent:  # if we are not dead
+                opponent._fight_round(self)
+        else:
+            opponent._fight_round(self)
+            if self:
+                self._fight_round(opponent)
+
+    def _fight_round(self, opponent):
+        print_resource = self.object.controller.text_display[GameResources.TEXT_FIGHT]
+        print_resource.ADD_TEXT = "{} attaque {} - Attaque = {}, parade opposant = {}".format(
+            self.object.name, opponent.object.name, self.at, opponent.prd)
+        at_test_result = GameUtil.pass_test(self.at)
+        print_resource.ADD_TEXT = "Résultat jet attaque {}".format(at_test_result)
+        if GameResources.CRITIC_SUCCESS in at_test_result:
+            # TODO: critical success effects and failure; Remove printing
+            opponent.take_damage(random.randint(self.pi[0], self.pi[1]))  # no parry
+        elif GameResources.SUCCESS in at_test_result:
+            # Success for attack, try to pary
+            prd_test_result = GameUtil.pass_test(opponent.prd)
+            print_resource.ADD_TEXT = "Résultat jet parade {}".format(prd_test_result)
+            if GameResources.FAILURE in prd_test_result:
+                # Opponent did not manage to parry
+                opponent.take_damage(random.randint(self.pi[0], self.pi[1]))
 
 
 class ArtificialIntelligence:
@@ -365,7 +388,7 @@ class HumanPlayerAI(ArtificialIntelligence):
 
     def __init__(self, ticker):
         self.ticker = ticker
-        self.speed = 2
+        self.speed = 1
         self.ticker.schedule_turn(self.speed, self)
 
     def take_turn(self):

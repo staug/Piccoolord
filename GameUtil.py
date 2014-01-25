@@ -10,13 +10,13 @@ def pass_test(property_tested,
               critic_failure_value=1):
         value = random.randint(1, random_value_max)
         if value <= critic_success_value:
-            return GameResources.CRITIC_SUCCESS
+            return GameResources.CRITIC_SUCCESS + " [{}]".format(str(value))
         elif value <= property_tested:
-            return GameResources.SUCCESS
+            return GameResources.SUCCESS + " [{}]".format(str(value))
         elif value > random_value_max - critic_failure_value:
-            return GameResources.CRITIC_FAILURE
+            return GameResources.CRITIC_FAILURE + " [{}]".format(str(value))
         else:
-            return GameResources.FAILURE
+            return GameResources.FAILURE + " [{}]".format(str(value))
 
 
 class AStar(object):
