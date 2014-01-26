@@ -128,6 +128,12 @@ class GameScene(SceneBase):
                 if event.key == pygame.K_c:
                     self.controller.view.camera.center(self.controller.player.pos)
 
+                if event.key == pygame.K_p:
+                    #pick up an item
+                    item_object = self.controller.get_item_at(self.controller.player.pos)
+                    if item_object:
+                        item_object.item.pick_up()
+
             self.controller.text_display[self.current_text_display_type].simple_update(event)
             # Click in the game window
             pos = self.controller.view.handle_events_camera_zone(event)
@@ -160,15 +166,12 @@ class GameScene(SceneBase):
             obj.draw()
 
         if not self.background:
-            self.background = pygame.image.load('./resources/img/background_game2.png').convert_alpha()
+            self.background = pygame.image.load(GameResources.GAME_BG_IMAGE).convert_alpha()
 
         screen.blit(self.background, (0, 0))
         screen.blit(self.controller.view.region_view, (0,0), area=self.controller.view.camera.camera_rect)
         screen.blit(self.controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
         self.controller.text_display[self.current_text_display_type].show()
-
-
-
 
 def run_game(window_size, fps, starting_scene):
     PygameInit()

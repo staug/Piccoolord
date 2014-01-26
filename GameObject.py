@@ -15,7 +15,9 @@ class GameObject:
                  blocking=False,
                  fighter=None,
                  ai=None,
-                 player=None):
+                 player=None,
+                 item=None,
+                 equipment = None):
         self.pos = self.old_pos = pos
         self.name = name
         self.blocking = blocking
@@ -35,6 +37,17 @@ class GameObject:
         self.ai = ai
         if self.ai:  # let the AI component know who owns it
             self.ai.object = self
+
+        self.item = item
+        if self.item:  #let the Item component know who owns it
+            self.item.object = self
+
+        self.equipment = equipment
+        if self.equipment:  #let the Equipment component know who owns it
+            self.equipment.object = self
+            #there must be an Item component for the Equipment component to work properly
+            self.item = Item()
+            self.item.object = self
 
     def draw(self):
         if not self.view:
@@ -131,10 +144,10 @@ class Player:
         self.original_attributes["hp"] = 20
         self.original_attributes["mp"] = 30
 
-
     def define_possible_origin(self):
         possible_origins = []
-        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE, GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
+        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE,
+                 GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
         origin_limits = {
             "Humain": {},
             "Barbare": {
@@ -144,34 +157,42 @@ class Player:
                 GameResources.ATTRIBUTE_COURAGE: {"MIN": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Haut Elfe": {
-                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 11}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MAX": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 11}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 12},
+                GameResources.ATTRIBUTE_ADRESSE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MAX": 12},
             },
             "Demi Elfe": {
                 GameResources.ATTRIBUTE_CHARISME: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 11},
             },
             "Elfe Sylvain": {
-                GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 10}, GameResources.ATTRIBUTE_FORCE: {"MAX": 11},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 10},
+                GameResources.ATTRIBUTE_FORCE: {"MAX": 11},
             },
             "Elfe Noir": {
                 GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 12}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13},
             },
             "Orque": {
-                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 8}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 8}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10},
+                GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Demi Orque": {
-                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11},
+                GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
             },
             "Gobelin": {
-                GameResources.ATTRIBUTE_COURAGE: {"MAX": 10}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 8}, GameResources.ATTRIBUTE_FORCE: {"MAX": 9},
+                GameResources.ATTRIBUTE_COURAGE: {"MAX": 10}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 10},
+                GameResources.ATTRIBUTE_CHARISME: {"MAX": 8}, GameResources.ATTRIBUTE_FORCE: {"MAX": 9},
             },
             "Ogre": {
-                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 9}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 13},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MAX": 9}, GameResources.ATTRIBUTE_CHARISME: {"MAX": 10},
+                GameResources.ATTRIBUTE_ADRESSE: {"MAX": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 13},
             },
             "Hobbit": {
-                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_FORCE: {"MAX": 10},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10},
+                GameResources.ATTRIBUTE_FORCE: {"MAX": 10},
             },
             "Gnome": {
-                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13}, GameResources.ATTRIBUTE_FORCE: {"MAX": 8},
+                GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 13},
+                GameResources.ATTRIBUTE_FORCE: {"MAX": 8},
             },
         }
         for origin in origin_limits.keys():
@@ -191,7 +212,8 @@ class Player:
     def define_possible_work(self):
         # TODO: race prevents some work!
         possible_works = []
-        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE, GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
+        names = [GameResources.ATTRIBUTE_COURAGE, GameResources.ATTRIBUTE_INTELLIGENCE,
+                 GameResources.ATTRIBUTE_CHARISME, GameResources.ATTRIBUTE_ADRESSE, GameResources.ATTRIBUTE_FORCE]
         work_limits = {
             "Guerrier": {
                 GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_FORCE: {"MIN": 12},
@@ -209,7 +231,8 @@ class Player:
                 GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 12},
             },
             "Paladin": {
-                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10}, GameResources.ATTRIBUTE_CHARISME: {"MIN": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 9},
+                GameResources.ATTRIBUTE_COURAGE: {"MIN": 12}, GameResources.ATTRIBUTE_INTELLIGENCE: {"MIN": 10},
+                GameResources.ATTRIBUTE_CHARISME: {"MIN": 11}, GameResources.ATTRIBUTE_FORCE: {"MIN": 9},
             },
             "Ranger": {
                 GameResources.ATTRIBUTE_CHARISME: {"MIN": 10}, GameResources.ATTRIBUTE_ADRESSE: {"MIN": 10},
@@ -246,11 +269,11 @@ class Player:
             possible_works.append("Aucun")
         return possible_works
 
-
     def __str__(self):
         return "XP={}, Destiné={}, Origine={}, Travail={}".format(
             self.xp, self.destiny_points, self.origin, self.work
         )
+
 
 class Fighter:
 
@@ -267,6 +290,9 @@ class Fighter:
         self.pary_this_turn = 0
         self.max_attack_per_turn = 1
         self.attack_this_turn = 0
+        # Inventory specifics
+        # Todo: put proper max weight
+        self.inventory = Inventory(10)
 
     def replicate_player_attributes(self, player):
         self.original_attributes = player.original_attributes
@@ -333,9 +359,8 @@ class Fighter:
         self.hp -= random.randint(value[0], value[1])
         self.hp -= additional_bonus
 
-
-    def death(self, playerComponent=None):
-        if not playerComponent:
+    def death(self, player_component=None):
+        if not player_component:
             # TODO: add player death
             #transform it into a nasty corpse! it doesn't block, can't be
             #attacked and doesn't move
@@ -353,7 +378,8 @@ class Fighter:
         """
         Main entry for combat.
         Principle: at this stage the enemies are already ordered by courage.
-        We simply test if the one who attacks has any attack left.
+        We simply test if the one who attacks has any attack left, make an attack (if possible),
+        and test if the opponent is dead. If it is, we change the XP.
         @param fighter_opponent: The other enemy
         @return: None
         """
@@ -370,7 +396,7 @@ class Fighter:
         if fighter_opponent.hp <= 0:
             if self.object.player and fighter_opponent.xp:
                 self.object.player.xp += fighter_opponent.xp
-            fighter_opponent.death(playerComponent=fighter_opponent.object.player)
+            fighter_opponent.death(player_component=fighter_opponent.object.player)
 
     def _fight_round(self, fighter_opponent, print_resource):
         # TODO: enhance critical success effects and failure
@@ -546,11 +572,155 @@ class BasicMonsterAI(ArtificialIntelligence):
                 if self.object.fighter:
                     self.object.fighter.fight(target.fighter)
                     if self.object.fighter: # if we are not dead...
-                        self.ticker.schedule_turn(self.speed, self) # schedule next turn
+                        self.ticker.schedule_turn(self.speed, self)  # schedule next turn
             else:
                 self.move_towards(target.pos)
                 self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
 
+
+class Inventory:
+    """ The inventory characteristics - limitations, max weight...
+    """
+    def __init__(self, max_weight):
+        self.inventory = []
+        self.max_weight = max_weight
+
+    def get_equipped_in_slot(self, slot):  #returns the equipment in a slot, or None if it's empty
+        for obj in self.inventory:
+            if obj.equipment and obj.equipment.slot == slot and obj.equipment.is_equipped:
+                return obj.equipment
+        return None
+
+    def get_all_equipped(self):  #returns a list of equipped items
+        equipped_list = []
+        for obj in self.inventory:
+            if obj.item and obj.item.equipment and obj.item.equipment.is_equipped:
+                equipped_list.append(obj.item.equipment)
+        return equipped_list
+
+    @property
+    def weight(self):
+        return sum(obj.item.weight for obj in self.inventory)
+
+    def append(self, item_object):
+        self.inventory.append(item_object)
+
+    def remove(self, item_object):
+        self.inventory.remove(item_object)
+
+    def equipment_compatible(self, equipment):
+        # Todo: add equipment incompatibilities
+        return True
+
+    # TODO: Review the following points...
+    @property
+    def power(self):  #return actual power, by summing up the bonuses from all equipped items
+        bonus = sum(equipment.power_bonus for equipment in self.get_all_equipped())
+        return bonus
+
+    @property
+    def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
+        bonus = sum(equipment.defense_bonus for equipment in self.get_all_equipped())
+        return bonus
+
+    @property
+    def max_hp(self):  #return actual max_hp, by summing up the bonuses from all equipped items
+        bonus = sum(equipment.max_hp_bonus for equipment in self.get_all_equipped())
+        return bonus
+
+
+class Item:
+
+    def __init__(self, use_function=None, weight=0, max_use_number=0):
+        self.use_function = use_function
+        self.weight = weight
+        self.nb_use = 0
+        self.max_use_number = max_use_number
+        self.inventory = None
+
+    def pick_up(self):
+        # add to the current player's inventory and remove from the map
+        inventory = self.object.controller.player.fighter.inventory
+        print_resource = self.object.controller.text_display[GameResources.TEXT_DIALOGUE]
+        if inventory.weight + self.weight > inventory.max_weight:
+            print_resource.ADD_TEXT = "Vous portez déjà {}. Cet objet est trop lourd ({}) " \
+                                      "pour votre capacité {}".format(inventory.weight,
+                                                                      self.weight,
+                                                                      inventory.max_weight)
+        else:
+            inventory.append(self.object)
+            self.inventory = inventory
+            print_resource.ADD_TEXT = "Vous ramassez un(e) {}".format(self.object.name)
+            self.object.controller.remove_object(self.object)
+
+            #special case: automatically equip, if the corresponding equipment slot is unused
+            equipment = self.object.equipment
+            if equipment and inventory.equipment_compatible(equipment):
+                if inventory.get_equipped_in_slot(equipment.slot) is None:
+                    equipment.equip()
+
+
+    def drop(self):
+        #special case: if the object has the Equipment component, dequip it before dropping
+        if self.object.equipment:
+            self.object.equipment.dequip()
+
+        #add to the map and remove from the player's inventory. also, place it at the player's coordinates
+        self.object.controller.append(self.object)
+        self.inventory.remove(self.object)
+        self.object.pos = self.object.controller.player.pos
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
+            "Vous laissez tomber un(e) {}".format(self.object.name)
+
+    def use(self):
+        #special case: if the object has the Equipment component, the "use" action is to equip/dequip
+        if self.object.equipment:
+            self.object.equipment.toggle_equip()
+            return
+
+        #just call the "use_function" if it is defined
+        if self.use_function is None or self.nb_use >= self.max_use_number:
+            self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
+                "{} ne peut pas être utilisé(e)".format(self.object.name)
+        else:
+            if self.use_function() != 'cancelled':
+                self.nb_use += 1
+                if self.nb_use >= self.max_use_number:
+                    self.inventory.remove(self.object)  #destroy after use, unless it was cancelled for some reason
+
+
+class Equipment:
+    #an object that can be equipped, yielding bonuses. automatically adds the Item component.
+    def __init__(self, slot, power_bonus=0, defense_bonus=0, max_hp_bonus=0):
+        self.power_bonus = power_bonus
+        self.defense_bonus = defense_bonus
+        self.max_hp_bonus = max_hp_bonus
+
+        self.slot = slot
+        self.is_equipped = False
+
+    def toggle_equip(self):  #toggle equip/dequip status
+        if self.is_equipped:
+            self.dequip()
+        else:
+            self.equip()
+
+    def equip(self):
+        #if the slot is already being used, dequip whatever is there first
+        old_equipment = self.object.controller.player.fighter.inventory.get_equipped_in_slot(self.slot)
+        if old_equipment is not None:
+            old_equipment.dequip()
+
+        #equip object and show a message about it
+        self.is_equipped = True
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = 'Equipped ' + self.object.name + ' on ' + self.slot + '.'
+
+    def dequip(self):
+        #dequip object and show a message about it
+        if not self.is_equipped:
+            return
+        self.is_equipped = False
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT =  'Dequipped ' + self.object.name + ' from ' + self.slot + '.'
 
 
 if __name__ == '__main__':

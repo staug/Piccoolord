@@ -80,6 +80,9 @@ class GameObjectView:
         rendering on screen. Return teh list of rect impacted.
         """
         dirty_recs = []
+        if self.owner.item:
+            self.always_need_to_draw = True
+
         if self._get_game_view().is_displayable(self.owner.pos) or \
                 self._get_game_view().is_displayable(self.owner.old_pos):
             if self.is_moving:
