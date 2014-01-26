@@ -73,15 +73,25 @@ class GameObject:
     def __str__(self):
         result = self.name
         if self.fighter:
-            result = result + "[" + str(self.fighter) + "]"
+            result = result + ", [" + str(self.fighter) + "]"
+        if self.player:
+            result = result + ", [" + str(self.player) + "]"
         return result
 
 class Player:
 
-    def __init__(self, attributes=None, work=None, origin=None):
+    def __init__(self, attributes=None, work=None, origin=None, destiny_points=None, xp=None):
         self.original_attributes = {}
         self.vanquished_enemy = []
-        self.destiny_points = random.randint(0, 3)
+
+        if destiny_points:
+            self.destiny_points = destiny_points
+        else:
+            self.destiny_points = random.randint(0, 3)
+        if xp:
+            self.xp = xp
+        else:
+            self.xp = 0
 
         if not attributes:
             self.roll_attributes()
@@ -93,6 +103,8 @@ class Player:
                      GameResources.ATTRIBUTE_FORCE]
             for att in names:
                 self.original_attributes[att] = attributes[att]
+            self.destiny_points = self.original_attributes['Destiny']
+            self.xp = self.original_attributes['xp']
 
         if work:
             self.work = work
@@ -100,9 +112,9 @@ class Player:
             self.work = random.choice(self.define_possible_work())
 
         if origin:
-            self.work = work
+            self.origin = origin
         else:
-            self.work = random.choice(self.define_possible_work())
+            self.origin = random.choice(self.define_possible_origin())
 
     def roll_attributes(self):
         names = [GameResources.ATTRIBUTE_COURAGE,
@@ -235,6 +247,11 @@ class Player:
         return possible_works
 
 
+    def __str__(self):
+        return "XP={}, Destiné={}, Origine={}, Travail={}".format(
+            self.xp, self.destiny_points, self.origin, self.work
+        )
+
 class Fighter:
 
     def __init__(self, resources=None):
@@ -243,11 +260,29 @@ class Fighter:
             self.original_attributes = resources
             self.hp = int(self.original_attributes["hp"])
             self.mp = int(self.original_attributes["mp"])
+            if "xp" in self.original_attributes:
+                self.xp = int(self.original_attributes["xp"])
+        # Fighter specific properties
+        self.max_pary_per_turn = 1
+        self.pary_this_turn = 0
+        self.max_attack_per_turn = 1
+        self.attack_this_turn = 0
 
     def replicate_player_attributes(self, player):
         self.original_attributes = player.original_attributes
         self.hp = self.original_attributes["hp"]
         self.mp = self.original_attributes["mp"]
+
+    def reset_pary(self):
+        """
+        "Reset" the number of parades. This is done by substracting the parade max value; that way, for critical failure
+         we can go beyond the max_pary_per_turn variable.
+        @return: None
+        """
+        self.pary_this_turn -= self.max_pary_per_turn
+
+    def reset_attack(self):
+        self.attack_this_turn -= self.max_attack_per_turn
 
     @property
     def cou(self):
@@ -294,10 +329,10 @@ class Fighter:
         # TODO: define impact points!
         return (3, 5)
 
-    def take_damage(self, value):
-        self.hp -= value
-        if self.hp <= 0:
-            self.death(playerComponent=self.object.player)
+    def take_damage(self, value, additional_bonus=0):
+        self.hp -= random.randint(value[0], value[1])
+        self.hp -= additional_bonus
+
 
     def death(self, playerComponent=None):
         if not playerComponent:
@@ -310,37 +345,65 @@ class Fighter:
             self.object.name = "Restes de " + self.object.name
 
     def __str__(self):
-        return "COU={}, INT={}, CHA={}, FO={}, AT={}, PRD={}".format(
-            self.cou, self.int, self.cha, self.fo, self.at, self.prd
+        return "HP={}, COU={}, INT={}, CHA={}, FO={}, AT={}, PRD={}".format(
+            self.hp, self.cou, self.int, self.cha, self.fo, self.at, self.prd
         )
 
-    def fight(self, opponent):
-        # TODO: adapt for multiple enemies?
-        if self.cou > opponent.cou:
-            self._fight_round(opponent)
-            if opponent:  # if we are not dead
-                opponent._fight_round(self)
-        else:
-            opponent._fight_round(self)
-            if self:
-                self._fight_round(opponent)
+    def fight(self, fighter_opponent):
+        """
+        Main entry for combat.
+        Principle: at this stage the enemies are already ordered by courage.
+        We simply test if the one who attacks has any attack left.
+        @param fighter_opponent: The other enemy
+        @return: None
+        """
 
-    def _fight_round(self, opponent):
         print_resource = self.object.controller.text_display[GameResources.TEXT_FIGHT]
-        print_resource.ADD_TEXT = "{} attaque {} - Attaque = {}, parade opposant = {}".format(
-            self.object.name, opponent.object.name, self.at, opponent.prd)
+        print_resource.ADD_TEXT = "{} tent une attaque contre {} - Attaque = {}, parade opposant = {}".format(
+            self.object.name, fighter_opponent.object.name, self.at, fighter_opponent.prd)
+
+        if self.attack_this_turn < self.max_attack_per_turn:
+            self._fight_round(fighter_opponent, print_resource)
+        else:
+            print_resource.ADD_TEXT = "{} ne peut plus attaquer à ce tour.".format(self.object.name)
+
+        if fighter_opponent.hp <= 0:
+            if self.object.player and fighter_opponent.xp:
+                self.object.player.xp += fighter_opponent.xp
+            fighter_opponent.death(playerComponent=fighter_opponent.object.player)
+
+    def _fight_round(self, fighter_opponent, print_resource):
+        # TODO: enhance critical success effects and failure
+
         at_test_result = GameUtil.pass_test(self.at)
         print_resource.ADD_TEXT = "Résultat jet attaque {}".format(at_test_result)
+        self.attack_this_turn += 1
+
         if GameResources.CRITIC_SUCCESS in at_test_result:
-            # TODO: critical success effects and failure; Remove printing
-            opponent.take_damage(random.randint(self.pi[0], self.pi[1]))  # no parry
+            fighter_opponent.take_damage(self.pi, additional_bonus=random.randint(0, 5))  # no parry
+        elif GameResources.CRITIC_FAILURE in at_test_result:
+            self.attack_this_turn += self.max_attack_per_turn # we lose one round...
+            self.pary_this_turn += self.max_pary_per_turn # we lose one round...
         elif GameResources.SUCCESS in at_test_result:
             # Success for attack, try to pary
-            prd_test_result = GameUtil.pass_test(opponent.prd)
-            print_resource.ADD_TEXT = "Résultat jet parade {}".format(prd_test_result)
-            if GameResources.FAILURE in prd_test_result:
-                # Opponent did not manage to parry
-                opponent.take_damage(random.randint(self.pi[0], self.pi[1]))
+            if fighter_opponent.pary_this_turn < fighter_opponent.max_pary_per_turn:
+                prd_test_result = GameUtil.pass_test(fighter_opponent.prd)
+                print_resource.ADD_TEXT = "Résultat jet parade {}".format(prd_test_result)
+                fighter_opponent.pary_this_turn += 1
+                if GameResources.CRITIC_SUCCESS in prd_test_result:
+                    self.attack_this_turn += self.max_attack_per_turn # we lose one round...
+                    self.pary_this_turn += self.max_pary_per_turn # we lose one round...
+                elif GameResources.CRITIC_FAILURE in prd_test_result:
+                    fighter_opponent.attack_this_turn += fighter_opponent.max_attack_per_turn # opponent loses one round...
+                    fighter_opponent.pary_this_turn += fighter_opponent.max_pary_per_turn # opponent loses one round...
+                elif GameResources.FAILURE in prd_test_result:
+                    # Opponent did not manage to parry
+                    fighter_opponent.take_damage(self.pi)
+
+            else:
+                print_resource.ADD_TEXT = "{} ne peut plus parer à ce tour.".format(fighter_opponent.object.name)
+
+
 
 
 class ArtificialIntelligence:
@@ -351,6 +414,10 @@ class ArtificialIntelligence:
     def take_turn(self):
         print("WARNING - TAKE TURN NOT IMPLEMENTED")
 
+    def __lt__(self, other):
+        if self.object and self.object.fighter and other.object and other.object.fighter:
+            return self.object.fighter.cou < other.object.fighter.cou
+        return True
 
 class FollowerAI(ArtificialIntelligence):
 
@@ -379,9 +446,12 @@ class FollowerAI(ArtificialIntelligence):
             tries += 1
 
     def take_turn(self):
+        self.object.fighter.reset_pary()
+        self.object.fighter.reset_attack()
         player = self.object.controller.player
         self.move_towards(player.pos)
         self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+
 
 
 class HumanPlayerAI(ArtificialIntelligence):
@@ -392,6 +462,9 @@ class HumanPlayerAI(ArtificialIntelligence):
         self.ticker.schedule_turn(self.speed, self)
 
     def take_turn(self):
+        self.object.fighter.reset_pary()
+        self.object.fighter.reset_attack()
+
         self.object.controller.scene.player_took_action = False
         (dx, dy) = (self.object.controller.scene.dx, self.object.controller.scene.dy)
         if dx == dy == 0:
@@ -458,21 +531,26 @@ class BasicMonsterAI(ArtificialIntelligence):
         return weakest_player
 
     def take_turn(self):
-        # find the closest enemy
-        target = None
-        if self.target_strategy == GameResources.TARGET_STRATEGY_CLOSEST:
-            target = self.find_closest_player()
-        elif self.target_strategy == GameResources.TARGET_STRATEGY_WEAKEST:
-            target = self.find_weakest_player()
+        if self.object.fighter: # Make sure we are not dead
+            self.object.fighter.reset_pary()
+            self.object.fighter.reset_attack()
 
-        if self.object.distance_to(target) <= self.attack_distance:
-            if self.object.fighter:
-                self.object.fighter.fight(target.fighter)
-                if self.object: # if we are not dead...
-                    self.ticker.schedule_turn(self.speed, self) # schedule next turn
-        else:
-            self.move_towards(target.pos)
-            self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+            # locate enemy
+            target = None
+            if self.target_strategy == GameResources.TARGET_STRATEGY_CLOSEST:
+                target = self.find_closest_player()
+            elif self.target_strategy == GameResources.TARGET_STRATEGY_WEAKEST:
+                target = self.find_weakest_player()
+
+            if self.object.distance_to(target) <= self.attack_distance:
+                if self.object.fighter:
+                    self.object.fighter.fight(target.fighter)
+                    if self.object.fighter: # if we are not dead...
+                        self.ticker.schedule_turn(self.speed, self) # schedule next turn
+            else:
+                self.move_towards(target.pos)
+                self.ticker.schedule_turn(self.speed, self)     # and schedule the next turn
+
 
 
 if __name__ == '__main__':

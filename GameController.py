@@ -135,8 +135,16 @@ class Ticker(object):
     def next_turn(self, increment=1):
         self.ticks += increment
         things_to_do = self.schedule.pop(self.ticks, [])
+        fighter_ai_obj = []
         for obj in things_to_do:
-            obj.take_turn()
+            # Tweak: if the object has a fighter component, then order it by descending courage
+            if obj.object and obj.object.fighter:
+                fighter_ai_obj.append(obj)
+            else:
+                obj.take_turn()
+        fighter_ai_obj.sort(reverse=True)
+        for fighter_ai in fighter_ai_obj:
+            fighter_ai.take_turn()
 
 if __name__ == '__main__':
     # The following is for the test only
