@@ -165,10 +165,10 @@ class GameScene(SceneBase):
         for obj in self.controller.objects:
             obj.draw()
 
-        if not self.background:
-            self.background = pygame.image.load(GameResources.GAME_BG_IMAGE).convert_alpha()
+#        if not self.background:
+#            self.background = pygame.image.load(GameResources.GAME_BG_IMAGE).convert_alpha()
 
-        screen.blit(self.background, (0, 0))
+#        screen.blit(self.background, (0, 0))
         screen.blit(self.controller.view.region_view, (0,0), area=self.controller.view.camera.camera_rect)
         screen.blit(self.controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
         self.controller.text_display[self.current_text_display_type].show()

@@ -44,7 +44,8 @@ class GameController:
         for i in range(50):
             equipment = GameObject.GameObject('Item_'+str(i),
                                               config._sections['buckler1'], self.region.get_starting_position(),
-                                              blocking=False, equipment=GameObject.Equipment(slot="Right_hand"))
+                                              blocking=False,
+                                              equipment=GameObject.Equipment(config._sections['buckler1']))
             self.add_object(equipment)
 
         player = GameObject.GameObject('Player_1', config._sections['Player_image_1'],

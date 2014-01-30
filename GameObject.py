@@ -5,6 +5,7 @@ import GameObjectView
 import random
 import GameResources
 import GameUtil
+import ast
 
 
 class GameObject:
@@ -46,7 +47,7 @@ class GameObject:
         if self.equipment:  #let the Equipment component know who owns it
             self.equipment.object = self
             #there must be an Item component for the Equipment component to work properly
-            self.item = Item()
+            self.item = Item(equipment.ressources)
             self.item.object = self
 
     def draw(self):
@@ -128,6 +129,10 @@ class Player:
             self.origin = origin
         else:
             self.origin = random.choice(self.define_possible_origin())
+
+    @property
+    def max_carry_value(self):
+        return self.object.fighter.fo * 10
 
     def roll_attributes(self):
         names = [GameResources.ATTRIBUTE_COURAGE,
@@ -583,7 +588,6 @@ class Inventory:
     """
     def __init__(self, max_weight):
         self.inventory = []
-        self.max_weight = max_weight
 
     def get_equipped_in_slot(self, slot):  #returns the equipment in a slot, or None if it's empty
         for obj in self.inventory:
@@ -631,18 +635,25 @@ class Inventory:
 
 class Item:
 
-    def __init__(self, use_function=None, weight=0, max_use_number=0):
-        self.use_function = use_function
-        self.weight = weight
+    def __init__(self, ressources):
+        self.ressources = ressources
+        self.weight = 0
+        self.use_function = None
+        if "weight" in self.ressources:
+            self.weight = int(self.ressources["weight"])
+        if "use_function" in self.ressources:
+            self.use_function = self.ressources["use_function"]
+        self.max_use_number = -1  # Infinity by convention
+        if "max_use_number" in self.ressources:
+            self.max_use_number = int(self.ressources["max_use_number"])
         self.nb_use = 0
-        self.max_use_number = max_use_number
         self.inventory = None
 
     def pick_up(self):
         # add to the current player's inventory and remove from the map
         inventory = self.object.controller.player.fighter.inventory
         print_resource = self.object.controller.text_display[GameResources.TEXT_DIALOGUE]
-        if inventory.weight + self.weight > inventory.max_weight:
+        if inventory.weight + self.weight > self.object.controller.player.player.max_carry_value:
             print_resource.ADD_TEXT = "Vous portez déjà {}. Cet objet est trop lourd ({}) " \
                                       "pour votre capacité {}".format(inventory.weight,
                                                                       self.weight,
@@ -679,7 +690,7 @@ class Item:
             return
 
         #just call the "use_function" if it is defined
-        if self.use_function is None or self.nb_use >= self.max_use_number:
+        if self.use_function is None or (self.max_use_number != -1 and self.nb_use >= self.max_use_number):
             self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
                 "{} ne peut pas être utilisé(e)".format(self.object.name)
         else:
@@ -691,12 +702,16 @@ class Item:
 
 class Equipment:
     #an object that can be equipped, yielding bonuses. automatically adds the Item component.
-    def __init__(self, slot, power_bonus=0, defense_bonus=0, max_hp_bonus=0):
-        self.power_bonus = power_bonus
-        self.defense_bonus = defense_bonus
-        self.max_hp_bonus = max_hp_bonus
+    def __init__(self, ressources):
+        self.ressources = ressources
+        self.modifier = {}
+        if "modifier" in self.ressources:
+            self.modifier = ast.literal_eval(self.ressources["modifier"])
 
-        self.slot = slot
+        self.slot = "NONE"
+        if "slot" in ressources:
+            self.slot = ressources["slot"]
+
         self.is_equipped = False
 
     def toggle_equip(self):  #toggle equip/dequip status
@@ -713,14 +728,22 @@ class Equipment:
 
         #equip object and show a message about it
         self.is_equipped = True
-        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = 'Equipped ' + self.object.name + ' on ' + self.slot + '.'
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT =\
+            self.object.name + ' équipé(e) sur ' + self.slot + '.'
 
     def dequip(self):
         #dequip object and show a message about it
         if not self.is_equipped:
             return
         self.is_equipped = False
-        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT =  'Dequipped ' + self.object.name + ' from ' + self.slot + '.'
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT =\
+            self.object.name + ' enlevé(e) de ' + self.slot + '.'
+
+    def get_bonus(self, type_of_bonus):
+        if self.is_equipped:
+            if type_of_bonus in self.ressources:
+                return int(self.ressources[type_of_bonus])
+        return 0
 
 
 if __name__ == '__main__':
