@@ -514,7 +514,7 @@ class HumanPlayerAI(ArtificialIntelligence):
                 self.object.controller.scene.player_took_action = True
             elif self.object.controller.player.move(dx, dy):
                 # todo: adapt the field of view
-                # self.object.controller.view.update_fog_of_war(self.object.pos, 3)
+                self.object.controller.view.update_fog_of_war(self.object.pos, 3)
                 self.object.controller.scene.player_took_action = True
             else:
                 self.ticker.schedule_turn(0, self)
