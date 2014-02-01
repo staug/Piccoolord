@@ -237,7 +237,7 @@ if __name__ == '__main__':
 
         if dx != 0 or dy != 0:
             a_controller.player.move(dx, dy)
-            # a_controller.view.update_fog_of_war(player.pos, 3)
+            a_controller.view.update_fog_of_war(player.pos, 3)
             a_controller.ticker.next_turn()
 
             a_controller.view.explorer_map.center(a_controller.player.pos)

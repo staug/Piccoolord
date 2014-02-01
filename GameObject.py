@@ -47,7 +47,7 @@ class GameObject:
         if self.equipment:  #let the Equipment component know who owns it
             self.equipment.object = self
             #there must be an Item component for the Equipment component to work properly
-            self.item = Item(equipment.ressources)
+            self.item = Item(equipment.resources)
             self.item.object = self
 
     def draw(self):
@@ -91,6 +91,7 @@ class GameObject:
         if self.player:
             result = result + ", [" + str(self.player) + "]"
         return result
+
 
 class Player:
 
@@ -317,31 +318,38 @@ class Fighter:
 
     @property
     def cou(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_COURAGE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_COURAGE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_COURAGE])
 
     @property
     def int(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_INTELLIGENCE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_INTELLIGENCE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_INTELLIGENCE])
 
     @property
     def cha(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_CHARISME])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_CHARISME) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_CHARISME])
 
     @property
     def ad(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_ADRESSE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_ADRESSE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_ADRESSE])
 
     @property
     def fo(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_FORCE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_FORCE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_FORCE])
 
     @property
     def at(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_ATTAQUE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_ATTAQUE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_ATTAQUE])
 
     @property
     def prd(self):
-        return int(self.original_attributes[GameResources.ATTRIBUTE_PARADE])
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_PARADE) +\
+               int(self.original_attributes[GameResources.ATTRIBUTE_PARADE])
 
     @property
     def mag_phy(self):
@@ -388,7 +396,6 @@ class Fighter:
         @param fighter_opponent: The other enemy
         @return: None
         """
-
         print_resource = self.object.controller.text_display[GameResources.TEXT_FIGHT]
         print_resource.ADD_TEXT = "{} tent une attaque contre {} - Attaque = {}, parade opposant = {}".format(
             self.object.name, fighter_opponent.object.name, self.at, fighter_opponent.prd)
@@ -506,10 +513,15 @@ class HumanPlayerAI(ArtificialIntelligence):
                 self.object.fighter.fight(monster_at_destination.fighter)
                 self.object.controller.scene.player_took_action = True
             elif self.object.controller.player.move(dx, dy):
+                # todo: adapt the field of view
+                # self.object.controller.view.update_fog_of_war(self.object.pos, 3)
                 self.object.controller.scene.player_took_action = True
+            else:
+                self.ticker.schedule_turn(0, self)
 
         if self.object.controller.scene.player_took_action:
             self.ticker.schedule_turn(self.speed, self)
+            self.ticker.schedule_turn(0, self)
 
 
 class BasicMonsterAI(ArtificialIntelligence):
@@ -598,8 +610,8 @@ class Inventory:
     def get_all_equipped(self):  #returns a list of equipped items
         equipped_list = []
         for obj in self.inventory:
-            if obj.item and obj.item.equipment and obj.item.equipment.is_equipped:
-                equipped_list.append(obj.item.equipment)
+            if obj.equipment and obj.equipment.is_equipped:
+                equipped_list.append(obj.equipment)
         return equipped_list
 
     @property
@@ -616,36 +628,23 @@ class Inventory:
         # Todo: add equipment incompatibilities
         return True
 
-    # TODO: Review the following points...
-    @property
-    def power(self):  #return actual power, by summing up the bonuses from all equipped items
-        bonus = sum(equipment.power_bonus for equipment in self.get_all_equipped())
-        return bonus
-
-    @property
-    def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
-        bonus = sum(equipment.defense_bonus for equipment in self.get_all_equipped())
-        return bonus
-
-    @property
-    def max_hp(self):  #return actual max_hp, by summing up the bonuses from all equipped items
-        bonus = sum(equipment.max_hp_bonus for equipment in self.get_all_equipped())
-        return bonus
+    def get_bonus(self, type_of_bonus):
+        return sum(equipment.get_bonus(type_of_bonus) for equipment in self.get_all_equipped())
 
 
 class Item:
 
-    def __init__(self, ressources):
-        self.ressources = ressources
+    def __init__(self, resources):
+        self.resources = resources
         self.weight = 0
         self.use_function = None
-        if "weight" in self.ressources:
-            self.weight = int(self.ressources["weight"])
-        if "use_function" in self.ressources:
-            self.use_function = self.ressources["use_function"]
+        if "weight" in self.resources:
+            self.weight = int(self.resources["weight"])
+        if "use_function" in self.resources:
+            self.use_function = self.resources["use_function"]
         self.max_use_number = -1  # Infinity by convention
-        if "max_use_number" in self.ressources:
-            self.max_use_number = int(self.ressources["max_use_number"])
+        if "max_use_number" in self.resources:
+            self.max_use_number = int(self.resources["max_use_number"])
         self.nb_use = 0
         self.inventory = None
 
@@ -669,7 +668,6 @@ class Item:
             if equipment and inventory.equipment_compatible(equipment):
                 if inventory.get_equipped_in_slot(equipment.slot) is None:
                     equipment.equip()
-
 
     def drop(self):
         #special case: if the object has the Equipment component, dequip it before dropping
@@ -702,15 +700,15 @@ class Item:
 
 class Equipment:
     #an object that can be equipped, yielding bonuses. automatically adds the Item component.
-    def __init__(self, ressources):
-        self.ressources = ressources
+    def __init__(self, resources):
+        self.resources = resources
         self.modifier = {}
-        if "modifier" in self.ressources:
-            self.modifier = ast.literal_eval(self.ressources["modifier"])
+        if "modifier" in self.resources:
+            self.modifier = ast.literal_eval(self.resources["modifier"])
 
         self.slot = "NONE"
-        if "slot" in ressources:
-            self.slot = ressources["slot"]
+        if "slot" in resources:
+            self.slot = resources["slot"]
 
         self.is_equipped = False
 
@@ -741,10 +739,9 @@ class Equipment:
 
     def get_bonus(self, type_of_bonus):
         if self.is_equipped:
-            if type_of_bonus in self.ressources:
-                return int(self.ressources[type_of_bonus])
+            if type_of_bonus in self.modifier:
+                return int(self.modifier[type_of_bonus])
         return 0
-
 
 if __name__ == '__main__':
     playerA = Player()
