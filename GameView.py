@@ -134,6 +134,14 @@ class GameScene(SceneBase):
                     if item_object:
                         item_object.item.pick_up()
 
+                if event.key == pygame.K_u:
+                    #use the item that is at this place
+                    item_object = self.controller.get_item_at(self.controller.player.pos)
+                    if item_object:
+                        item_object.item.pick_up()
+                        item_object.item.use()
+
+
             self.controller.text_display[self.current_text_display_type].simple_update(event)
             # Click in the game window
             pos = self.controller.view.handle_events_camera_zone(event)
@@ -165,10 +173,8 @@ class GameScene(SceneBase):
         for obj in self.controller.objects:
             obj.draw()
 
-#        if not self.background:
-#            self.background = pygame.image.load(GameResources.GAME_BG_IMAGE).convert_alpha()
-
-#        screen.blit(self.background, (0, 0))
+        # if self.player_took_action:
+        #     self.controller.view.update_fog_of_war(self.controller.player.pos, 3)
         screen.blit(self.controller.view.region_view, (0,0), area=self.controller.view.camera.camera_rect)
         screen.blit(self.controller.view.explorer_map.surface, (50,50), special_flags=pygame.BLEND_RGBA_ADD)
         self.controller.text_display[self.current_text_display_type].show()

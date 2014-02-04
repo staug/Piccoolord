@@ -365,8 +365,20 @@ class Fighter:
 
     @property
     def pi(self):
-        # TODO: define impact points!
-        return (3, 5)
+        bonus = self.inventory.get_bonus(GameResources.ATTRIBUTE_IMPACT)
+        if type(bonus) is tuple:
+            return bonus
+        # Default impact points for hand-based combat
+        return (1, 2)
+
+    @property
+    def pi_min(self):
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_IMPACT_MIN)
+
+    @property
+    def bare_handed(self):
+        return self.inventory.get_bonus(GameResources.ATTRIBUTE_IMPACT_MIN) == 0 and \
+               type(self.inventory.get_bonus(GameResources.ATTRIBUTE_IMPACT)) is not tuple
 
     def take_damage(self, value, additional_bonus=0):
         self.hp -= random.randint(value[0], value[1])
@@ -383,8 +395,8 @@ class Fighter:
             self.object.name = "Restes de " + self.object.name
 
     def __str__(self):
-        return "HP={}, COU={}, INT={}, CHA={}, FO={}, AT={}, PRD={}".format(
-            self.hp, self.cou, self.int, self.cha, self.fo, self.at, self.prd
+        return "HP={}, COU={}, INT={}, CHA={}, FO={}, AT={}, PRD={}, PI={}+{}".format(
+            self.hp, self.cou, self.int, self.cha, self.fo, self.at, self.prd, self.pi_min, self.pi
         )
 
     def fight(self, fighter_opponent):
@@ -418,7 +430,7 @@ class Fighter:
         self.attack_this_turn += 1
 
         if GameResources.CRITIC_SUCCESS in at_test_result:
-            fighter_opponent.take_damage(self.pi, additional_bonus=random.randint(0, 5))  # no parry
+            fighter_opponent.take_damage(self.pi, additional_bonus=self.pi_min)  # no parry
         elif GameResources.CRITIC_FAILURE in at_test_result:
             self.attack_this_turn += self.max_attack_per_turn # we lose one round...
             self.pary_this_turn += self.max_pary_per_turn # we lose one round...
@@ -436,7 +448,7 @@ class Fighter:
                     fighter_opponent.pary_this_turn += fighter_opponent.max_pary_per_turn # opponent loses one round...
                 elif GameResources.FAILURE in prd_test_result:
                     # Opponent did not manage to parry
-                    fighter_opponent.take_damage(self.pi)
+                    fighter_opponent.take_damage(self.pi, additional_bonus=self.pi_min)
 
             else:
                 print_resource.ADD_TEXT = "{} ne peut plus parer à ce tour.".format(fighter_opponent.object.name)
@@ -513,8 +525,6 @@ class HumanPlayerAI(ArtificialIntelligence):
                 self.object.fighter.fight(monster_at_destination.fighter)
                 self.object.controller.scene.player_took_action = True
             elif self.object.controller.player.move(dx, dy):
-                # todo: adapt the field of view
-                self.object.controller.view.update_fog_of_war(self.object.pos, 3)
                 self.object.controller.scene.player_took_action = True
             else:
                 self.ticker.schedule_turn(0, self)
@@ -629,7 +639,18 @@ class Inventory:
         return True
 
     def get_bonus(self, type_of_bonus):
-        return sum(equipment.get_bonus(type_of_bonus) for equipment in self.get_all_equipped())
+        result = 0
+        for equipment in self.get_all_equipped():
+            bonus = equipment.get_bonus(type_of_bonus)
+            if type(bonus) is tuple:
+                if type(result) is not tuple:
+                    result = (0, 0)
+                tmp0 = result[0] + bonus[0]
+                tmp1 = result[1] + bonus[1]
+                result = (tmp0, tmp1)
+            elif bonus != 0:
+                result += bonus
+        return result
 
 
 class Item:
@@ -637,11 +658,13 @@ class Item:
     def __init__(self, resources):
         self.resources = resources
         self.weight = 0
-        self.use_function = None
+        self.use_function_name = None
         if "weight" in self.resources:
             self.weight = int(self.resources["weight"])
         if "use_function" in self.resources:
-            self.use_function = self.resources["use_function"]
+            self.use_function_name = self.resources["use_function"]
+        if "modifier" in self.resources:
+            self.modifier = ast.literal_eval(self.resources["modifier"])
         self.max_use_number = -1  # Infinity by convention
         if "max_use_number" in self.resources:
             self.max_use_number = int(self.resources["max_use_number"])
@@ -688,15 +711,41 @@ class Item:
             return
 
         #just call the "use_function" if it is defined
-        if self.use_function is None or (self.max_use_number != -1 and self.nb_use >= self.max_use_number):
+        if self.use_function_name is None or (self.max_use_number != -1 and self.nb_use >= self.max_use_number):
             self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
                 "{} ne peut pas être utilisé(e)".format(self.object.name)
         else:
-            if self.use_function() != 'cancelled':
+            result = None
+            if self.use_function_name == "Drink":
+                result = self.use_function_drink()
+            if result != 'cancelled':
                 self.nb_use += 1
                 if self.nb_use >= self.max_use_number:
                     self.inventory.remove(self.object)  #destroy after use, unless it was cancelled for some reason
 
+    def use_function_drink(self):
+        self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
+                "Vous buvez un(e) ".format(self.object.name)
+        Buff(self.object.controller.ticker, self.object.controller.player.fighter, self.modifier, 3)
+        return None
+
+class Buff:
+    '''
+    A temporary buff/debuff
+    '''
+    def __init__(self, ticker, target, modifier, effect_time):
+        self.ticker = ticker
+        self.target = target
+        self.modifier = modifier
+        for name_attribute in self.modifier:
+            setattr(self.target, name_attribute,
+                    getattr(self.target, name_attribute) + int(self.modifier[name_attribute]))
+        self.ticker.schedule_turn(effect_time, self)  # schedule the timing to end the effect
+
+    def take_turn(self):
+        for name_attribute in self.modifier:
+            setattr(self.target, name_attribute,
+                    getattr(self.target, name_attribute) - int(self.modifier[name_attribute]))
 
 class Equipment:
     #an object that can be equipped, yielding bonuses. automatically adds the Item component.
@@ -740,6 +789,9 @@ class Equipment:
     def get_bonus(self, type_of_bonus):
         if self.is_equipped:
             if type_of_bonus in self.modifier:
+                bonus = self.modifier[type_of_bonus]
+                if type(bonus) is tuple:
+                    return bonus
                 return int(self.modifier[type_of_bonus])
         return 0
 

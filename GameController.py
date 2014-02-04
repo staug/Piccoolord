@@ -41,12 +41,19 @@ class GameController:
                                             fighter=GameObject.Fighter(config._sections['Skeletton']))
             self.add_object(monster)
 
-        for i in range(50):
+        for i in range(10):
             equipment = GameObject.GameObject('Item_'+str(i),
                                               config._sections['buckler1'], self.region.get_starting_position(),
                                               blocking=False,
                                               equipment=GameObject.Equipment(config._sections['buckler1']))
             self.add_object(equipment)
+
+        for i in range(50):
+            item = GameObject.GameObject('Item_'+str(i),
+                                              config._sections['brown_potion'], self.region.get_starting_position(),
+                                              blocking=False,
+                                              item=GameObject.Item(config._sections['brown_potion']))
+            self.add_object(item)
 
         player = GameObject.GameObject('Player_1', config._sections['Player_image_1'],
                                        self.region.get_starting_position(), blocking=True,
@@ -156,7 +163,7 @@ class Ticker(object):
         fighter_ai_obj = []
         for obj in things_to_do:
             # Tweak: if the object has a fighter component, then order it by descending courage
-            if obj.object and obj.object.fighter:
+            if hasattr(obj, "object") and hasattr(obj.object, "fighter"):
                 fighter_ai_obj.append(obj)
             else:
                 obj.take_turn()

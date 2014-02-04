@@ -10,6 +10,7 @@ lookup. Last, the tile themselves have backward links to the regions.
 import random
 import WorldMapResources
 import WorldMapView
+import sys
 
 
 class World():
@@ -41,7 +42,8 @@ class World():
             size = (random.randint(min_size_region[0], max_size_region[0]),
                     random.randint(min_size_region[1], max_size_region[1]))
             self.regions.append(Region(size,
-                                       random.randint(min_number_places, max_number_places)))
+                                       random.randint(min_number_places, max_number_places),
+                                       cave_like=(random.randint(0, 0) == 0)))
 
     def __str__(self):
         result = "[World: " + self.name + "\n"
@@ -57,20 +59,27 @@ class Region:
 
     def __init__(self,
                  size,
-                 number_places):
+                 number_places,
+                 cave_like=True):
         """
         @summary Instantiate a new Region. List of params:
         @param size: (int, int) the actual size of the region
         @param number_places: int the number of places this region should contain
         """
         self.size = size
-        self.places = []
         self.grid = {}
-        self.connections = {}
         self.__starting_positions = []
         self.name = Place.name_generator()
-
-        self.__generate_region_map(number_places)
+        self.cave_like = cave_like
+        if cave_like:
+            while not self.__generate_region_cave():
+                print("World "+self.name+" discarded - generating new one")
+                self.name = Place.name_generator()
+                pass
+        else:
+            self.places = []
+            self.connections = {}
+            self.__generate_region_map(number_places)
 
     def get_starting_position(self):
         """
@@ -93,20 +102,101 @@ class Region:
     def block_light(self, grid_pos):
         return self.grid[grid_pos].blocking
 
-    def print_info(self, print_grid=False):
-
-        print("Printing region Info...\n\n")
-        print("Size:  " + str(self.size[0]) + "x" + str(self.size[1]))
-        print("Places:  " + str(len(self.places)) + "\n\n")
-        print("Place name: ")
-        for place in self.places:
-            print(place)
-        if print_grid:
+    def __generate_region_cave(self):
+        '''
+        Generate a cavelike structure. Less rectangular than the previous...
+        @return: True if the room was correct
+        '''
+        # Refer to:
+        # http://www.roguebasin.com/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels
+        # First: we initialize the map
+        for x in range(0, self.size[0]):
             for y in range(0, self.size[1]):
-                row = ""
-                for x in range(0, self.size[0]):
-                    row += str((self.grid[(x, y)]).tile_type)
-                print (row)
+                if random.randint(0, 100) <= 40:  # 40 % chance of wall
+                    self.grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_WALL)
+                else:
+                    self.grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_BLANK)
+
+        # First iteration:
+        for iteration in range(4):
+            next_gen_grid = {}
+            for x in range(0, self.size[0]):
+                for y in range(0, self.size[1]):
+                    nb_wall = self.__nb_wall_around((x, y), 1)
+                    nb_wall_2 = self.__nb_wall_around((x, y), 2)
+                    if nb_wall >= 5 or nb_wall_2 <= 1:
+                        next_gen_grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_WALL)
+                    else:
+                        next_gen_grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_BLANK)
+            # copy...
+            for x in range(0, self.size[0]):
+                for y in range(1, self.size[1]):
+                    self.grid[(x, y)] = Tile((x, y), tile_type=next_gen_grid[(x, y)].tile_type)
+
+        # Final Tweak to smooth:
+        for iteration in range(3):
+            next_gen_grid = {}
+            for x in range(0, self.size[0]):
+                for y in range(0, self.size[1]):
+                    nb_wall = self.__nb_wall_around((x, y), 1)
+                    if nb_wall >= 5:
+                        next_gen_grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_WALL)
+                    else:
+                        next_gen_grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_BLANK)
+            # copy...
+            for x in range(0, self.size[0]):
+                for y in range(1, self.size[1]):
+                    self.grid[(x, y)] = Tile((x, y), tile_type=next_gen_grid[(x, y)].tile_type)
+
+        # Set the external wall
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                if x == 0 or y == 0 or x == self.size[0] - 1 or y == self.size[1] - 1:
+                    self.grid[(x, y)] = Tile((x, y), tile_type=Tile.GRID_WALL)
+
+        # Try to flood
+        (x, y) = (0, 0)
+        while self.grid[(x, y)].tile_type != Tile.GRID_BLANK:
+            (x, y) = (random.randint(0, self.size[0] - 1), random.randint(0, self.size[1] - 1))
+        save = sys.getrecursionlimit()
+        sys.setrecursionlimit(10000)
+        self.__flood((x, y))
+        sys.setrecursionlimit(save)
+
+        # Final check: do we have some non connected places
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                if self.grid[(x, y)].tile_type == Tile.GRID_BLANK:
+                    self.__starting_positions = []
+                    return False
+                elif self.grid[(x,y)].tile_type == Tile.GRID_FLOOR:
+                    self.__starting_positions.append((x,y))
+
+        random.shuffle(self.__starting_positions)
+        return True
+
+    def __flood(self, pos):
+        if pos not in self.grid or self.grid[pos].tile_type == Tile.GRID_WALL or self.grid[pos].tile_type == Tile.GRID_FLOOR:
+            return
+        if self.grid[pos].tile_type == Tile.GRID_BLANK:
+            (x, y) = pos
+            self.grid[pos].tile_type = Tile.GRID_FLOOR
+            self.__flood((x - 1, y))
+            self.__flood((x - 1, y - 1))
+            self.__flood((x - 1, y + 1))
+            self.__flood((x, y - 1))
+            self.__flood((x, y + 1))
+            self.__flood((x + 1, y))
+            self.__flood((x + 1, y - 1))
+            self.__flood((x + 1, y + 1))
+
+    def __nb_wall_around(self, pos, distance):
+        result = 0
+        for x in range(pos[0] - distance, pos[0] + distance + 1):
+            for y in range(pos[1] - distance, pos[1] + distance + 1):
+                if (x, y) not in self.grid or self.grid[(x, y)].tile_type == Tile.GRID_WALL:
+                    result += 1
+        return result
 
     def __generate_region_map(self, max_number_places):
         """
@@ -468,6 +558,8 @@ class Tile():
     GRID_CORNERNE = 'e'  # corner
     GRID_CORNERSE = 's'  # corner
 
+    GRID_WALL = "W"
+    GRID_FLOODED = "F"
     # Operations
 
 # Constants only valid there
@@ -475,7 +567,9 @@ class Tile():
 MARGIN_AROUND = 3  # This is the space that we need to leave around the maze for good graphic
 
 if __name__ == '__main__':
-    a_world = World("Test", 3, (80, 80), (120, 120), 40, 60)
-    for region in a_world.regions:
-        view = WorldMapView.RegionView(region)
-        view.save(region.name)
+    print(Region((80, 80), 1, cave_like=True))
+
+    # a_world = World("Test", 3, (80, 80), (120, 120), 40, 60)
+    # for region in a_world.regions:
+    #     view = WorldMapView.RegionView(region)
+    #     view.save(region.name)

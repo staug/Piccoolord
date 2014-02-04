@@ -43,6 +43,8 @@ class GameControllerView:
         return rect
 
     def is_displayable(self, tile_pos):
+        #todo: if fog of war, need to switch:
+        #return self.owner.region.grid[tile_pos].visible and self.camera.is_displayable(tile_pos)
         return self.camera.is_displayable(tile_pos)
 
     def update_fog_of_war(self, grid_pos, radius):

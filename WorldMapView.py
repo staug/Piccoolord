@@ -20,9 +20,52 @@ class RegionView(View):
         self.view = pygame.Surface((self.owner.size[0] * self.TILE_WIDTH,
                                     self.owner.size[1] * self.TILE_HEIGHT),
                                    pygame.SRCALPHA, 32)
-        self.__build_view()
+        if not self.owner.cave_like:
+            self.__build_view_room()
+        else:
+            self.__build_view_cave()
 
-    def __build_view(self):
+    def __build_view_cave(self):
+        SOURCE_FILE2 = pygame.image.load('./resources/img/tile/tileset.png').convert_alpha()
+        FLOOR_LIST = [
+            SOURCE_FILE2.subsurface(pygame.Rect((8 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((9 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((10 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((11 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((12 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((13 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((14 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((15 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT)))
+        ]
+        SOURCE_FILE = pygame.image.load('./resources/img/PatternWall1.png').convert_alpha()
+        IMAGES_DICT = {
+            '0' : SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 1 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '1' : SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 1 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '2' : SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 1 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '3' : SOURCE_FILE.subsurface(pygame.Rect((6 * self.TILE_WIDTH, 1 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '4' : SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '5' : SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '6' : SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '7' : SOURCE_FILE.subsurface(pygame.Rect((6 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '8' : SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 5 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '9' : SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 5 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '10': SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 5 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '11': SOURCE_FILE.subsurface(pygame.Rect((6 * self.TILE_WIDTH, 5 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '12': SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 7 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '13': SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 7 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '14': SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 7 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '15': SOURCE_FILE.subsurface(pygame.Rect((6 * self.TILE_WIDTH, 7 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+        }
+        floorImage = random.choice(FLOOR_LIST)
+        self.view.fill(GameResources.GAME_BG_COLOR)
+        for x in range(self.owner.size[0]):
+            for y in range(self.owner.size[1]):
+                self.view.blit(floorImage, (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+                if self.owner.grid[(x, y)].tile_type == WorldMapLogic.Tile.GRID_WALL:
+                    self.view.blit(IMAGES_DICT[str(self.__compute_graphical_weight(self.owner, (x, y)))],
+                                                        (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+
+    def __build_view_room(self):
         SOURCE_FILE = pygame.image.load('./resources/img/tile/caveTileset.png').convert_alpha()
         SOURCE_FILE2 = pygame.image.load('./resources/img/tile/tileset.png').convert_alpha()
         FLOOR_LIST = [
@@ -146,10 +189,16 @@ class RegionView(View):
 
     def __compute_graphical_weight(self, level_map, pos):
         (x, y) = pos
-        return RegionView.weight(level_map.grid[(x, y - 1)]) * 1 +\
+        if not self.owner.cave_like:
+            return RegionView.weight(level_map.grid[(x, y - 1)]) * 1 +\
                RegionView.weight(level_map.grid[(x + 1, y)]) * 2 +\
                RegionView.weight(level_map.grid[(x, y + 1)]) * 4 +\
                RegionView.weight(level_map.grid[(x - 1, y)]) * 8
+        else:
+            return self.weight_cave((x, y - 1)) * 1 +\
+               self.weight_cave((x + 1, y)) * 2 +\
+               self.weight_cave((x, y + 1)) * 4 +\
+               self.weight_cave((x - 1, y)) * 8
 
     @staticmethod
     def weight(tile):
@@ -159,4 +208,10 @@ class RegionView(View):
             return 0
         return 1
 
+    def weight_cave(self, pos):
+        if pos not in self.owner.grid:
+            return 1
+        elif self.owner.grid[pos].tile_type == WorldMapLogic.Tile.GRID_FLOOR:
+            return 0
+        return 1
 
