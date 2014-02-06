@@ -65,6 +65,8 @@ class RegionView(View):
                     self.view.blit(IMAGES_DICT[str(self.__compute_graphical_weight(self.owner, (x, y)))],
                                                         (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
 
+
+    '''
     def __build_view_room(self):
         SOURCE_FILE = pygame.image.load('./resources/img/tile/caveTileset.png').convert_alpha()
         SOURCE_FILE2 = pygame.image.load('./resources/img/tile/tileset.png').convert_alpha()
@@ -184,29 +186,80 @@ class RegionView(View):
                                 self.view.blit(random.choice(currentImageDictionary[decoRef]),
                                                         (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
 
+    '''
+
+    def __build_view_room(self):
+        SOURCE_FILE = pygame.image.load('./resources/img/tile/caveTileset.png').convert_alpha()
+        SOURCE_FILE2 = pygame.image.load('./resources/img/tile/tileset.png').convert_alpha()
+        FLOOR_LIST = [
+            SOURCE_FILE2.subsurface(pygame.Rect((8 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((9 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((10 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((11 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((12 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((13 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((14 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            SOURCE_FILE2.subsurface(pygame.Rect((15 * self.TILE_WIDTH, 6 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT)))
+        ]
+        # Note, in the future many image dict depending on type: rocky, woody...
+        # start with rocky
+        IMAGES_DICT = {
+            '1' : SOURCE_FILE.subsurface(pygame.Rect((1 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '3' : SOURCE_FILE.subsurface(pygame.Rect((3 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '4' : SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 11 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '5' : SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '6' : SOURCE_FILE.subsurface(pygame.Rect((0 * self.TILE_WIDTH, 9 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '7' : SOURCE_FILE.subsurface(pygame.Rect((2 * self.TILE_WIDTH, 9 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '9' : SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '10': SOURCE_FILE.subsurface(pygame.Rect((3 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '11': SOURCE_FILE.subsurface(pygame.Rect((1 * self.TILE_WIDTH, 3 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '12': SOURCE_FILE.subsurface(pygame.Rect((1 * self.TILE_WIDTH, 9 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '13': SOURCE_FILE.subsurface(pygame.Rect((3 * self.TILE_WIDTH, 9 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            '14': SOURCE_FILE.subsurface(pygame.Rect((3 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            WorldMapLogic.Tile.GRID_FLOOR: SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 13 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            WorldMapLogic.Tile.GRID_WALLN: SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            WorldMapLogic.Tile.GRID_WALLE: SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 2 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            WorldMapLogic.Tile.GRID_WALLW: SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 1 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            'W3' : SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+            'W9' : SOURCE_FILE.subsurface(pygame.Rect((4 * self.TILE_WIDTH, 8 * self.TILE_HEIGHT), (self.TILE_WIDTH, self.TILE_HEIGHT))),
+        }
+
+        floorImage = random.choice(FLOOR_LIST)
+
+        self.view.fill(GameResources.GAME_BG_COLOR)
+        for x in range(self.owner.size[0]):
+            for y in range(self.owner.size[1]):
+                if (x,y) in self.owner.grid:
+                    if self.owner.grid[(x, y)].tile_type == WorldMapLogic.Tile.GRID_FLOOR:
+                        self.view.blit(floorImage, (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+                        weight = str(self.__compute_graphical_weight(self.owner, (x, y)))
+                        if weight in IMAGES_DICT:
+                            self.view.blit(IMAGES_DICT[weight], (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+                    elif self.owner.grid[(x, y)].tile_type in IMAGES_DICT:
+                        weight = str(self.__compute_graphical_weight(self.owner, (x, y), room_wall=True))
+                        if 'W'+str(weight) in IMAGES_DICT:
+                            self.view.blit(IMAGES_DICT['W'+str(weight)],
+                                                        (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+                        else:
+                            self.view.blit(IMAGES_DICT[self.owner.grid[(x, y)].tile_type],
+                                                        (x * self.TILE_WIDTH, y * self.TILE_HEIGHT))
+
+
     def save(self, name):
         pygame.image.save(self.view, name + ".png")
 
-    def __compute_graphical_weight(self, level_map, pos):
+    def __compute_graphical_weight(self, level_map, pos, room_wall=False):
         (x, y) = pos
         if not self.owner.cave_like:
-            return RegionView.weight(level_map.grid[(x, y - 1)]) * 1 +\
-               RegionView.weight(level_map.grid[(x + 1, y)]) * 2 +\
-               RegionView.weight(level_map.grid[(x, y + 1)]) * 4 +\
-               RegionView.weight(level_map.grid[(x - 1, y)]) * 8
+            return self.weight_room((x, y - 1), room_wall) * 1 +\
+               self.weight_room((x + 1, y), room_wall) * 2 +\
+               self.weight_room((x, y + 1), room_wall) * 4 +\
+               self.weight_room((x - 1, y), room_wall) * 8
         else:
             return self.weight_cave((x, y - 1)) * 1 +\
                self.weight_cave((x + 1, y)) * 2 +\
                self.weight_cave((x, y + 1)) * 4 +\
                self.weight_cave((x - 1, y)) * 8
-
-    @staticmethod
-    def weight(tile):
-        if not tile.part_of:
-            return 0
-        if tile.tile_type == WorldMapLogic.Tile.GRID_FLOOR:
-            return 0
-        return 1
 
     def weight_cave(self, pos):
         if pos not in self.owner.grid:
@@ -215,3 +268,15 @@ class RegionView(View):
             return 0
         return 1
 
+    def weight_room(self, pos, room_wall):
+        if pos not in self.owner.grid:
+            if room_wall:
+                return 1
+            return 0
+        elif self.owner.grid[pos].tile_type == WorldMapLogic.Tile.GRID_FLOOR:
+            if room_wall:
+                return 0
+            return 1
+        if room_wall:
+            return 1
+        return 0

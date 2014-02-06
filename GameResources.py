@@ -7,7 +7,8 @@ GLOBAL_WINDOW_SIZE = (800, 600)  # the global window dimension, used to initiali
 CAMERA_WINDOW_SIZE = (600, 400)
 MAP_WINDOW_SIZE = (100, 100)
 TEXT_MARGIN = 15
-TEXT_BGCOLOR = (173, 158, 195)
+TEXT_BGCOLOR = (0, 0, 0)
+TEXT_FGCOLOR = (255, 255, 255)
 # Explorer Map Characteristics
 MAP_BG_COLOR = (0, 0, 0)
 MAP_VISIBLE_COLOR = (255, 255, 255)

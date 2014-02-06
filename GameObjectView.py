@@ -145,5 +145,5 @@ class PlayerView:
         """
         Render the player rectangular area on the left border of the screen
         """
-        pass
+
         #TODO: implement the player surface area

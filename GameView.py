@@ -96,7 +96,7 @@ class GameScene(SceneBase):
                                             fontsize=12,
                                             height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
                                             bg=GameResources.TEXT_BGCOLOR,
-                                            fgcolor=(20,20,20))
+                                            fgcolor=GameResources.TEXT_FGCOLOR)
             self.controller.add_text_display(text_dialogue, GameResources.TEXT_DIALOGUE)
         if not self.controller.is_text_initialized(GameResources.TEXT_FIGHT):
             text_fight = PythonExtraLib.reader.Reader("Bienvenue - Combat mode",
@@ -107,7 +107,7 @@ class GameScene(SceneBase):
                                             fontsize=12,
                                             height=GameResources.GLOBAL_WINDOW_SIZE[1] - GameResources.CAMERA_WINDOW_SIZE[1]-2*GameResources.TEXT_MARGIN,
                                             bg=GameResources.TEXT_BGCOLOR,
-                                            fgcolor=(255,20,20))
+                                            fgcolor=GameResources.TEXT_FGCOLOR)
             self.controller.add_text_display(text_fight, GameResources.TEXT_FIGHT)
         self.current_text_display_type = GameResources.TEXT_DIALOGUE
         self.player_took_action = True
@@ -133,6 +133,23 @@ class GameScene(SceneBase):
                     item_object = self.controller.get_item_at(self.controller.player.pos)
                     if item_object:
                         item_object.item.pick_up()
+
+                if event.key == pygame.K_i:
+                    #display inventory - to be used as next screen?
+                    #TODO Implement Real Inventory Display
+                    self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = "Inventory: "
+                    for item in self.controller.player.fighter.inventory.inventory:
+                        self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = str(item)
+                    self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = "-- End"
+
+                if event.key == pygame.K_d:
+                    #drop item
+                    #TODO Implement ReaL Inventory Management
+                    if len(self.controller.player.fighter.inventory.inventory) > 0:
+                        item_object = self.controller.player.fighter.inventory.inventory[0]
+                        self.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = "Drop: {}".format(item_object.name)
+                        item_object.item.drop()
+
 
                 if event.key == pygame.K_u:
                     #use the item that is at this place

@@ -43,7 +43,7 @@ class World():
                     random.randint(min_size_region[1], max_size_region[1]))
             self.regions.append(Region(size,
                                        random.randint(min_number_places, max_number_places),
-                                       cave_like=(random.randint(0, 0) == 0)))
+                                       cave_like=(random.randint(0, 0) != 0)))
 
     def __str__(self):
         result = "[World: " + self.name + "\n"
@@ -266,21 +266,21 @@ class Region:
                     new_place.connections.append(neighbor_place)
 
         # Adding the deco
-        random.shuffle(self.places)
-        for place in self.places:
-            if place.size[0] > 11 and place.size[1] > 11:
-                if random.randint(0, 100) < 60:
-                    self.__deco_big_floor(place)
-            if random.randint(0, 100) < 30:
-                self.__deco_2x2_floor(place)
-            if random.randint(0, 100) < 50:
-                for i in range(0, random.randint(0, 3)):
-                    self.__deco_1x2_floor(place)
-            if random.randint(0, 100) < 60:
-                for i in range(0, random.randint(0, 5)):
-                    self.__deco_1x1_floor(place)
-            for i in range(0, random.randint(0, 5)):
-                self.__deco_1x2_wall(place)
+        # random.shuffle(self.places)
+        # for place in self.places:
+        #     if place.size[0] > 11 and place.size[1] > 11:
+        #         if random.randint(0, 100) < 60:
+        #             self.__deco_big_floor(place)
+        #     if random.randint(0, 100) < 30:
+        #         self.__deco_2x2_floor(place)
+        #     if random.randint(0, 100) < 50:
+        #         for i in range(0, random.randint(0, 3)):
+        #             self.__deco_1x2_floor(place)
+        #     if random.randint(0, 100) < 60:
+        #         for i in range(0, random.randint(0, 5)):
+        #             self.__deco_1x1_floor(place)
+        #     for i in range(0, random.randint(0, 5)):
+        #         self.__deco_1x2_wall(place)
 
         # Now we have finished.. We tie back all the tiles that belong to the places for easier further treatment
         for x in range(0, self.size[0]):

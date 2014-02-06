@@ -698,7 +698,7 @@ class Item:
             self.object.equipment.dequip()
 
         #add to the map and remove from the player's inventory. also, place it at the player's coordinates
-        self.object.controller.append(self.object)
+        self.object.controller.add_object(self.object)
         self.inventory.remove(self.object)
         self.object.pos = self.object.controller.player.pos
         self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
@@ -725,7 +725,7 @@ class Item:
 
     def use_function_drink(self):
         self.object.controller.text_display[GameResources.TEXT_DIALOGUE].ADD_TEXT = \
-                "Vous buvez un(e) ".format(self.object.name)
+                "Vous buvez un(e) {}".format(self.object.name)
         Buff(self.object.controller.ticker, self.object.controller.player.fighter, self.modifier, 3)
         return None
 
